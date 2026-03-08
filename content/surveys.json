@@ -1,0 +1,465 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "Hacker Family Feud survey questions - Main rounds",
+    "totalQuestions": 35,
+    "style": "DFIU - irreverent, technically grounded, crowd-pleasing"
+  },
+  "surveys": [
+    {
+      "id": 1,
+      "question": "Name something you'd find in every hacker's home lab",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Raspberry Pi", "points": 28 },
+        { "answer": "Too many monitors", "points": 22 },
+        { "answer": "Tangled cables everywhere", "points": 18 },
+        { "answer": "An old server that's always on", "points": 14 },
+        { "answer": "Stickers on everything", "points": 10 },
+        { "answer": "A network switch with blinking lights", "points": 5 }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "Name something a pentester says after a successful engagement",
+      "survey": "100 security professionals",
+      "answers": [
+        { "answer": "They should have patched", "points": 30 },
+        { "answer": "That was too easy", "points": 24 },
+        { "answer": "I'm in", "points": 18 },
+        { "answer": "Time to write the report", "points": 12 },
+        { "answer": "Default credentials again", "points": 8 },
+        { "answer": "They're so fucked", "points": 5 }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "Name a reason a production server goes down at 3 AM",
+      "survey": "100 sysadmins",
+      "answers": [
+        { "answer": "Someone pushed to prod on Friday", "points": 32 },
+        { "answer": "Disk full / ran out of space", "points": 22 },
+        { "answer": "Certificate expired", "points": 16 },
+        { "answer": "DNS", "points": 12 },
+        { "answer": "Memory leak", "points": 8 },
+        { "answer": "Someone tripped over a cable", "points": 6 }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "Name something overheard at DEF CON",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Don't connect to the WiFi", "points": 35 },
+        { "answer": "I need more water / I'm so hungover", "points": 20 },
+        { "answer": "Have you been to the villages?", "points": 15 },
+        { "answer": "My badge isn't working", "points": 12 },
+        { "answer": "Goons are cool actually", "points": 8 },
+        { "answer": "Is that a pineapple?", "points": 6 }
+      ]
+    },
+    {
+      "id": 5,
+      "question": "Name a tool every SOC analyst has open right now",
+      "survey": "100 security professionals",
+      "answers": [
+        { "answer": "Splunk / SIEM", "points": 30 },
+        { "answer": "Slack / Teams", "points": 22 },
+        { "answer": "Jira / ticketing system", "points": 16 },
+        { "answer": "A terminal / SSH session", "points": 14 },
+        { "answer": "VirusTotal", "points": 10 },
+        { "answer": "Their resume", "points": 5 }
+      ]
+    },
+    {
+      "id": 6,
+      "question": "Top reasons a pentest report gets ignored",
+      "survey": "100 security professionals",
+      "answers": [
+        { "answer": "It's too long / TL;DR", "points": 28 },
+        { "answer": "Business says it's acceptable risk", "points": 24 },
+        { "answer": "No budget to fix it", "points": 18 },
+        { "answer": "Management doesn't understand it", "points": 14 },
+        { "answer": "We'll fix it next quarter", "points": 8 },
+        { "answer": "The findings are embarrassing", "points": 5 }
+      ]
+    },
+    {
+      "id": 7,
+      "question": "Name something a developer does instead of writing documentation",
+      "survey": "100 programmers",
+      "answers": [
+        { "answer": "Refactors code that works fine", "points": 28 },
+        { "answer": "Says the code is self-documenting", "points": 24 },
+        { "answer": "Opens a new side project", "points": 16 },
+        { "answer": "Argues on Reddit / Hacker News", "points": 14 },
+        { "answer": "Rewrites everything in Rust", "points": 10 },
+        { "answer": "Updates their dotfiles", "points": 5 }
+      ]
+    },
+    {
+      "id": 8,
+      "question": "Name a thing that has 'never been breached' right before getting breached",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "A Fortune 500 company", "points": 30 },
+        { "answer": "A government agency", "points": 22 },
+        { "answer": "A password manager", "points": 18 },
+        { "answer": "A blockchain / crypto exchange", "points": 14 },
+        { "answer": "A security vendor", "points": 10 },
+        { "answer": "Someone's ego", "points": 3 }
+      ]
+    },
+    {
+      "id": 9,
+      "question": "Name something a hacker has too many of",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Unfinished side projects", "points": 26 },
+        { "answer": "Browser tabs open", "points": 22 },
+        { "answer": "Passwords / accounts", "points": 18 },
+        { "answer": "Hoodies", "points": 14 },
+        { "answer": "Domains they'll never use", "points": 10 },
+        { "answer": "Opinions", "points": 6 }
+      ]
+    },
+    {
+      "id": 10,
+      "question": "Name something you'd find in a CISO's nightmare",
+      "survey": "100 security professionals",
+      "answers": [
+        { "answer": "Ransomware / data breach", "points": 32 },
+        { "answer": "The board asking questions", "points": 20 },
+        { "answer": "An unpatched Exchange server", "points": 16 },
+        { "answer": "A journalist calling", "points": 12 },
+        { "answer": "Shadow IT everywhere", "points": 10 },
+        { "answer": "Their resume on LinkedIn set to 'Open to Work'", "points": 6 }
+      ]
+    },
+    {
+      "id": 11,
+      "question": "Name a programming language hackers love",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Python", "points": 35 },
+        { "answer": "C", "points": 20 },
+        { "answer": "Bash / Shell", "points": 15 },
+        { "answer": "Go", "points": 10 },
+        { "answer": "Rust", "points": 8 },
+        { "answer": "JavaScript", "points": 7 }
+      ]
+    },
+    {
+      "id": 12,
+      "question": "Name something that's always the real vulnerability",
+      "survey": "100 security professionals",
+      "answers": [
+        { "answer": "Humans / social engineering", "points": 35 },
+        { "answer": "Weak passwords", "points": 22 },
+        { "answer": "Unpatched software", "points": 16 },
+        { "answer": "Misconfigured cloud storage", "points": 10 },
+        { "answer": "Default credentials", "points": 8 },
+        { "answer": "Management", "points": 5 }
+      ]
+    },
+    {
+      "id": 13,
+      "question": "Name a famous data breach",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Equifax", "points": 25 },
+        { "answer": "Yahoo", "points": 20 },
+        { "answer": "Target", "points": 15 },
+        { "answer": "SolarWinds", "points": 12 },
+        { "answer": "Sony", "points": 10 },
+        { "answer": "LinkedIn", "points": 8 },
+        { "answer": "Marriott", "points": 5 }
+      ]
+    },
+    {
+      "id": 14,
+      "question": "Name something you should never do on hotel WiFi",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Online banking", "points": 30 },
+        { "answer": "Log into anything without VPN", "points": 24 },
+        { "answer": "Check email", "points": 16 },
+        { "answer": "Online shopping with credit card", "points": 14 },
+        { "answer": "Anything illegal... on THEIR network", "points": 8 },
+        { "answer": "Trust it at all", "points": 5 }
+      ]
+    },
+    {
+      "id": 15,
+      "question": "Name a way people get phished",
+      "survey": "100 security professionals",
+      "answers": [
+        { "answer": "Fake email from the boss / CEO fraud", "points": 28 },
+        { "answer": "Package delivery notification", "points": 22 },
+        { "answer": "Password reset link", "points": 18 },
+        { "answer": "Invoice / payment request", "points": 14 },
+        { "answer": "LinkedIn message", "points": 10 },
+        { "answer": "QR code (quishing)", "points": 5 }
+      ]
+    },
+    {
+      "id": 16,
+      "question": "Name something every CTF team argues about",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Who gets to do the pwn challenges", "points": 26 },
+        { "answer": "Whether to sleep or keep going", "points": 22 },
+        { "answer": "The crypto challenge nobody can solve", "points": 18 },
+        { "answer": "Who forgot to submit the flag", "points": 14 },
+        { "answer": "Pizza toppings", "points": 10 },
+        { "answer": "Whether the challenge is broken or they're dumb", "points": 7 }
+      ]
+    },
+    {
+      "id": 17,
+      "question": "Name a lie on a tech company's careers page",
+      "survey": "100 programmers",
+      "answers": [
+        { "answer": "We're like a family here", "points": 30 },
+        { "answer": "Unlimited PTO", "points": 24 },
+        { "answer": "Work-life balance", "points": 16 },
+        { "answer": "Competitive salary", "points": 12 },
+        { "answer": "Cutting-edge tech stack", "points": 10 },
+        { "answer": "Flat hierarchy", "points": 5 }
+      ]
+    },
+    {
+      "id": 18,
+      "question": "Name something you'd find in a hacker's go-bag for a conference",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Laptop", "points": 30 },
+        { "answer": "USB rubber ducky / Flipper Zero", "points": 20 },
+        { "answer": "Burner phone", "points": 16 },
+        { "answer": "WiFi Pineapple / network tools", "points": 12 },
+        { "answer": "Lockpicks", "points": 10 },
+        { "answer": "Business cards (hacker ones, not corporate)", "points": 5 },
+        { "answer": "Aspirin / Pedialyte", "points": 4 }
+      ]
+    },
+    {
+      "id": 19,
+      "question": "Name something you blame when the code doesn't work",
+      "survey": "100 programmers",
+      "answers": [
+        { "answer": "Caching", "points": 28 },
+        { "answer": "DNS", "points": 22 },
+        { "answer": "The last person who committed", "points": 18 },
+        { "answer": "Dependencies / package updates", "points": 14 },
+        { "answer": "The compiler / interpreter", "points": 10 },
+        { "answer": "Cosmic rays", "points": 5 }
+      ]
+    },
+    {
+      "id": 20,
+      "question": "Name a hacker conference",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "DEF CON", "points": 40 },
+        { "answer": "Black Hat", "points": 25 },
+        { "answer": "RSA", "points": 12 },
+        { "answer": "CCC / Chaos Communication Congress", "points": 8 },
+        { "answer": "BSides", "points": 7 },
+        { "answer": "ShmooCon", "points": 4 }
+      ]
+    },
+    {
+      "id": 21,
+      "question": "Name a type of cyber attack",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Phishing", "points": 30 },
+        { "answer": "Ransomware", "points": 22 },
+        { "answer": "DDoS", "points": 16 },
+        { "answer": "SQL injection", "points": 12 },
+        { "answer": "XSS / Cross-site scripting", "points": 8 },
+        { "answer": "Man-in-the-middle", "points": 6 }
+      ]
+    },
+    {
+      "id": 22,
+      "question": "Name something you should never reuse",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Passwords", "points": 40 },
+        { "answer": "Needles", "points": 20 },
+        { "answer": "Encryption keys / nonces", "points": 15 },
+        { "answer": "Condoms", "points": 10 },
+        { "answer": "Excuses", "points": 8 }
+      ]
+    },
+    {
+      "id": 23,
+      "question": "Name something that makes an infosec person twitch",
+      "survey": "100 security professionals",
+      "answers": [
+        { "answer": "Password on a sticky note", "points": 28 },
+        { "answer": "Open S3 buckets", "points": 22 },
+        { "answer": "HTTP without the S", "points": 16 },
+        { "answer": "Admin/admin credentials", "points": 14 },
+        { "answer": "USB drive in the parking lot", "points": 10 },
+        { "answer": "Someone saying 'I have nothing to hide'", "points": 6 }
+      ]
+    },
+    {
+      "id": 24,
+      "question": "Name a legendary hacker or hacking group",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Kevin Mitnick", "points": 25 },
+        { "answer": "Anonymous", "points": 22 },
+        { "answer": "LulzSec", "points": 15 },
+        { "answer": "Cult of the Dead Cow", "points": 12 },
+        { "answer": "Lazarus Group", "points": 8 },
+        { "answer": "Phineas Fisher", "points": 5 }
+      ]
+    },
+    {
+      "id": 25,
+      "question": "Name a reason a developer mass-quits their job",
+      "survey": "100 programmers",
+      "answers": [
+        { "answer": "Return to office mandate", "points": 30 },
+        { "answer": "Got a better offer / more money", "points": 24 },
+        { "answer": "Bad management / toxic culture", "points": 18 },
+        { "answer": "Forced to maintain legacy code forever", "points": 12 },
+        { "answer": "Layoffs coming, jumping before pushed", "points": 8 },
+        { "answer": "AI replaced their team... allegedly", "points": 5 }
+      ]
+    },
+    {
+      "id": 26,
+      "question": "Name something running on port 80 that shouldn't be",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "An admin panel / dashboard", "points": 28 },
+        { "answer": "A printer management page", "points": 22 },
+        { "answer": "phpMyAdmin", "points": 18 },
+        { "answer": "A webcam feed", "points": 14 },
+        { "answer": "An IoT device config page", "points": 10 },
+        { "answer": "Someone's personal website from 2003", "points": 5 }
+      ]
+    },
+    {
+      "id": 27,
+      "question": "Name something people lie about on their security compliance audit",
+      "survey": "100 security professionals",
+      "answers": [
+        { "answer": "We do regular penetration testing", "points": 28 },
+        { "answer": "All employees completed security training", "points": 24 },
+        { "answer": "We have an incident response plan", "points": 18 },
+        { "answer": "Multi-factor is enabled for everyone", "points": 14 },
+        { "answer": "We review logs regularly", "points": 8 },
+        { "answer": "Our passwords meet complexity requirements", "points": 5 }
+      ]
+    },
+    {
+      "id": 28,
+      "question": "Name a Linux distro used for security testing",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Kali", "points": 45 },
+        { "answer": "Parrot", "points": 20 },
+        { "answer": "BlackArch", "points": 12 },
+        { "answer": "Tails", "points": 10 },
+        { "answer": "Qubes", "points": 5 }
+      ]
+    },
+    {
+      "id": 29,
+      "question": "Name something a sysadmin does at 5:01 PM on a Friday that they'll regret",
+      "survey": "100 sysadmins",
+      "answers": [
+        { "answer": "Pushes an update to production", "points": 30 },
+        { "answer": "Runs a database migration", "points": 22 },
+        { "answer": "Changes firewall rules", "points": 16 },
+        { "answer": "Reboots a server", "points": 14 },
+        { "answer": "Renews/changes SSL certificates", "points": 10 },
+        { "answer": "Says 'it should be fine'", "points": 5 }
+      ]
+    },
+    {
+      "id": 30,
+      "question": "Name a thing that has a worse security track record than you'd expect",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Hospitals / healthcare", "points": 26 },
+        { "answer": "Voting machines", "points": 22 },
+        { "answer": "Smart home / IoT devices", "points": 18 },
+        { "answer": "Cars / automotive", "points": 14 },
+        { "answer": "Airlines / aviation systems", "points": 10 },
+        { "answer": "Security companies themselves", "points": 6 }
+      ]
+    },
+    {
+      "id": 31,
+      "question": "Name something a junior developer Googles on their first day",
+      "survey": "100 programmers",
+      "answers": [
+        { "answer": "How to exit Vim", "points": 30 },
+        { "answer": "Git commands / how to use Git", "points": 24 },
+        { "answer": "What does this error message mean", "points": 16 },
+        { "answer": "How to set up their dev environment", "points": 12 },
+        { "answer": "Is it okay to ask questions", "points": 8 },
+        { "answer": "Average developer salary", "points": 6 }
+      ]
+    },
+    {
+      "id": 32,
+      "question": "Name a thing that's technically a computer but nobody thinks of as one",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "A smart fridge", "points": 26 },
+        { "answer": "A modern car", "points": 22 },
+        { "answer": "A thermostat", "points": 18 },
+        { "answer": "A credit card chip", "points": 14 },
+        { "answer": "An elevator", "points": 10 },
+        { "answer": "A pregnancy test (the digital ones)", "points": 6 }
+      ]
+    },
+    {
+      "id": 33,
+      "question": "Name an excuse for not enabling MFA",
+      "survey": "100 security professionals",
+      "answers": [
+        { "answer": "It's too inconvenient / annoying", "points": 32 },
+        { "answer": "Users will complain", "points": 22 },
+        { "answer": "We haven't gotten around to it", "points": 16 },
+        { "answer": "Our systems don't support it", "points": 12 },
+        { "answer": "Our passwords are strong enough", "points": 8 },
+        { "answer": "We've never been hacked", "points": 6 }
+      ]
+    },
+    {
+      "id": 34,
+      "question": "Name something hackers and cats have in common",
+      "survey": "100 hackers",
+      "answers": [
+        { "answer": "Active at night / nocturnal", "points": 30 },
+        { "answer": "Curious about everything", "points": 24 },
+        { "answer": "Knock things off tables / break stuff", "points": 16 },
+        { "answer": "Ignore instructions", "points": 12 },
+        { "answer": "Stare at screens", "points": 8 },
+        { "answer": "Think they're smarter than everyone", "points": 6 }
+      ]
+    },
+    {
+      "id": 35,
+      "question": "Name a thing that's died more times than it should have",
+      "survey": "100 programmers",
+      "answers": [
+        { "answer": "Flash / Adobe Flash", "points": 28 },
+        { "answer": "Internet Explorer", "points": 22 },
+        { "answer": "Java applets", "points": 16 },
+        { "answer": "RSS", "points": 12 },
+        { "answer": "Google products (Reader, Wave, Plus...)", "points": 10 },
+        { "answer": "COBOL (it keeps coming back)", "points": 8 }
+      ]
+    }
+  ]
+}

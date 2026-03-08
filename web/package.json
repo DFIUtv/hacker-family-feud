@@ -1,0 +1,12 @@
+{
+  "name": "hacker-family-feud",
+  "version": "1.0.0",
+  "description": "Hacker Family Feud - DFIU Game Show",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}

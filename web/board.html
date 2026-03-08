@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hacker Family Feud - Board</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0a2e;
+  color: #fff;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* --- Scoreboard --- */
+.scoreboard {
+  display: flex;
+  height: 90px;
+  border-bottom: 3px solid #f59e0b;
+}
+.team-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0 2rem;
+}
+.team-panel:first-child { background: #1a1a4e; }
+.team-panel:last-child { background: #1a1a4e; }
+.team-panel.active { background: #2a1a00; }
+.team-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.team-score-val {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #f59e0b;
+  min-width: 80px;
+  text-align: center;
+}
+.vs {
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #666;
+  background: #0a0a2e;
+}
+
+/* --- Phase display --- */
+.phase-display {
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #f59e0b;
+  background: #111133;
+}
+.round-badge {
+  display: inline-block;
+  margin-left: 1rem;
+  padding: 2px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.round-badge.double { background: #f59e0b; color: #000; }
+.round-badge.triple { background: #ef4444; color: #fff; }
+
+/* --- Survey Board --- */
+.survey-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  flex: 1;
+}
+
+.question-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.survey-text {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 1.5rem;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.board-cell {
+  background: #1a1a4e;
+  border: 2px solid #333366;
+  border-radius: 8px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+.board-cell .cell-num {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #555588;
+  width: 40px;
+  flex-shrink: 0;
+}
+.board-cell .cell-text {
+  flex: 1;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #555588;
+  text-transform: uppercase;
+}
+.board-cell .cell-pts {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #555588;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Revealed state */
+.board-cell.revealed {
+  background: #1a3a1a;
+  border-color: #22c55e66;
+  animation: revealFlash 0.6s ease;
+}
+.board-cell.revealed .cell-num { color: #22c55e; }
+.board-cell.revealed .cell-text { color: #fff; }
+.board-cell.revealed .cell-pts { color: #f59e0b; }
+
+@keyframes revealFlash {
+  0% { transform: scaleY(0); }
+  50% { transform: scaleY(1.05); background: #2a5a2a; }
+  100% { transform: scaleY(1); }
+}
+
+/* --- Strikes overlay --- */
+.strike-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.strike-overlay.visible { opacity: 1; }
+.strike-overlay .big-x {
+  font-size: 20rem;
+  font-weight: 900;
+  color: #ef4444;
+  text-shadow: 0 0 60px rgba(239,68,68,0.5);
+  animation: strikeSlam 0.5s ease;
+}
+@keyframes strikeSlam {
+  0% { transform: scale(3); opacity: 0; }
+  50% { transform: scale(0.9); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- Strikes indicator --- */
+.strikes-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+.strike-mark {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #333;
+  transition: color 0.3s;
+}
+.strike-mark.active { color: #ef4444; text-shadow: 0 0 20px rgba(239,68,68,0.4); }
+
+/* --- Round Points --- */
+.round-pts-display {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #f59e0b;
+  margin-top: 0.5rem;
+}
+
+/* --- Fast Money --- */
+.fm-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  width: 100%;
+}
+.fm-timer-display {
+  font-size: 6rem;
+  font-weight: 900;
+  color: #fff;
+  margin: 1rem 0;
+}
+.fm-timer-display.warn { color: #f59e0b; }
+.fm-timer-display.crit { color: #ef4444; }
+
+.fm-table {
+  width: 100%;
+  max-width: 800px;
+  border-collapse: collapse;
+}
+.fm-table th {
+  padding: 0.5rem 1rem;
+  color: #666;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+}
+.fm-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #222244;
+  text-align: center;
+  font-size: 1.1rem;
+}
+.fm-table .pts { color: #f59e0b; font-weight: 800; font-size: 1.3rem; }
+.fm-total {
+  font-size: 3rem;
+  font-weight: 900;
+  margin: 1.5rem 0;
+}
+.fm-total.win { color: #22c55e; }
+.fm-total.lose { color: #ef4444; }
+
+/* --- Lobby / Game Over --- */
+.center-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 90px);
+  text-align: center;
+}
+.center-msg h2 {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #f59e0b;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+.center-msg p {
+  font-size: 1.5rem;
+  color: #888;
+  margin-top: 1rem;
+}
+
+/* Controlling team indicator */
+.controlling {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #f59e0b;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<div class="scoreboard" id="scoreboard"></div>
+<div class="phase-display" id="phase-display"></div>
+<div id="board-area"></div>
+<div class="strike-overlay" id="strike-overlay">
+  <div class="big-x">&#10006;</div>
+</div>
+
+<script>
+const WS_URL = new URLSearchParams(location.search).get('ws') || `ws://${location.hostname}:${location.port || 3003}`;
+let ws = null;
+let state = null;
+let lastStrikeCount = 0;
+
+function connect() {
+  ws = new WebSocket(WS_URL);
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ type: 'register-board' }));
+  };
+  ws.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'game-state') {
+      const oldState = state;
+      state = msg.state;
+      render(oldState);
+    }
+    if (msg.type === 'strike') {
+      showStrike(msg.count);
+    }
+    if (msg.type === 'timer-tick' && state && state.fastMoney) {
+      state.fastMoney.timer = msg.timer;
+      updateTimer();
+    }
+  };
+  ws.onclose = () => setTimeout(connect, 2000);
+  ws.onerror = () => ws.close();
+}
+
+function esc(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function render(oldState) {
+  if (!state) return;
+  renderScoreboard();
+  renderPhase();
+  renderArea(oldState);
+}
+
+function renderScoreboard() {
+  document.getElementById('scoreboard').innerHTML = `
+    <div class="team-panel ${state.controllingTeam === 0 ? 'active' : ''}">
+      <span class="team-name">${esc(state.teams[0].name)}</span>
+      <span class="team-score-val">${state.teams[0].score}</span>
+    </div>
+    <div class="vs">VS</div>
+    <div class="team-panel ${state.controllingTeam === 1 ? 'active' : ''}">
+      <span class="team-score-val">${state.teams[1].score}</span>
+      <span class="team-name">${esc(state.teams[1].name)}</span>
+    </div>`;
+}
+
+function renderPhase() {
+  const multiplier = state.multipliers?.[state.round] || 3;
+  const mLabel = multiplier === 2 ? '<span class="round-badge double">DOUBLE</span>' :
+                 multiplier === 3 ? '<span class="round-badge triple">TRIPLE</span>' : '';
+  const phaseLabels = {
+    lobby: 'WAITING TO START',
+    faceoff: `FACE-OFF - ROUND ${state.round + 1} ${mLabel}`,
+    play_pass: `PLAY OR PASS? ${mLabel}`,
+    play: `ROUND ${state.round + 1} ${mLabel}`,
+    steal: `STEAL! ${mLabel}`,
+    score: 'ROUND COMPLETE',
+    fast_money_setup: 'FAST MONEY',
+    fast_money_p1: 'FAST MONEY - PLAYER 1',
+    fast_money_p2: 'FAST MONEY - PLAYER 2',
+    fast_money_reveal: 'FAST MONEY - FINAL SCORES',
+    game_over: 'GAME OVER',
+  };
+  document.getElementById('phase-display').innerHTML = phaseLabels[state.phase] || state.phase;
+}
+
+function renderArea(oldState) {
+  const area = document.getElementById('board-area');
+  switch (state.phase) {
+    case 'lobby':
+      area.innerHTML = `<div class="center-msg"><h2>HACKER<br>FAMILY FEUD</h2><p>Don't Fuck It Up.</p></div>`;
+      break;
+    case 'faceoff':
+      renderFaceoff(area);
+      break;
+    case 'play_pass':
+    case 'play':
+    case 'steal':
+    case 'score':
+      renderBoard(area, oldState);
+      break;
+    case 'fast_money_setup':
+      area.innerHTML = `<div class="center-msg"><h2>FAST MONEY</h2><p>${esc(state.teams[state.fastMoney?.winningTeam ?? 0].name)} plays for the win!</p></div>`;
+      break;
+    case 'fast_money_p1':
+    case 'fast_money_p2':
+      renderFastMoney(area);
+      break;
+    case 'fast_money_reveal':
+      renderFastMoneyReveal(area);
+      break;
+    case 'game_over':
+      renderGameOver(area);
+      break;
+  }
+}
+
+function renderFaceoff(area) {
+  const q = state.currentQuestion;
+  if (!q) return;
+  area.innerHTML = `
+    <div class="survey-area">
+      <div class="question-text">${esc(q.question)}</div>
+      <div class="survey-text">${esc(q.survey)}</div>
+      <div class="board-grid">
+        ${q.answers.map((a, i) => `
+          <div class="board-cell ${a.revealed ? 'revealed' : ''}">
+            <span class="cell-num">${i + 1}</span>
+            <span class="cell-text">${a.revealed ? esc(a.text) : ''}</span>
+            <span class="cell-pts">${a.revealed ? a.points * (state.multipliers?.[state.round] || 3) : ''}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+function renderBoard(area, oldState) {
+  const q = state.currentQuestion;
+  if (!q) return;
+  const multiplier = state.multipliers?.[state.round] || 3;
+
+  // Detect newly revealed answers for animation
+  const newReveals = new Set();
+  if (oldState?.currentQuestion) {
+    q.answers.forEach((a, i) => {
+      if (a.revealed && !oldState.currentQuestion.answers[i]?.revealed) {
+        newReveals.add(i);
+      }
+    });
+  }
+
+  const controlText = state.controllingTeam >= 0 ?
+    `${esc(state.teams[state.controllingTeam].name)} ${state.phase === 'steal' ? 'can steal!' : 'is playing'}` : '';
+
+  area.innerHTML = `
+    <div class="survey-area">
+      <div class="question-text">${esc(q.question)}</div>
+      <div class="survey-text">${esc(q.survey)}</div>
+      ${controlText ? `<div class="controlling">${controlText}</div>` : ''}
+      <div class="board-grid">
+        ${q.answers.map((a, i) => `
+          <div class="board-cell ${a.revealed ? 'revealed' : ''}" ${newReveals.has(i) ? 'style="animation:revealFlash 0.6s ease"' : ''}>
+            <span class="cell-num">${i + 1}</span>
+            <span class="cell-text">${a.revealed ? esc(a.text) : ''}</span>
+            <span class="cell-pts">${a.revealed ? a.points * multiplier : ''}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="strikes-bar">
+        ${[0, 1, 2].map(i => `<span class="strike-mark ${state.strikes > i ? 'active' : ''}">&#10006;</span>`).join('')}
+      </div>
+      <div class="round-pts-display">${state.roundPoints} POINTS</div>
+    </div>`;
+}
+
+function showStrike(count) {
+  if (count > lastStrikeCount) {
+    const overlay = document.getElementById('strike-overlay');
+    overlay.classList.add('visible');
+    setTimeout(() => overlay.classList.remove('visible'), 1500);
+  }
+  lastStrikeCount = count;
+}
+
+function renderFastMoney(area) {
+  const fm = state.fastMoney;
+  if (!fm) return;
+  const timerClass = fm.timer <= 5 ? 'crit' : fm.timer <= 10 ? 'warn' : '';
+  area.innerHTML = `
+    <div class="fm-display">
+      <div class="fm-timer-display ${timerClass}" id="fm-timer">${fm.timer}</div>
+      <p style="color:#888;font-size:1.2rem;">Question ${fm.currentQ + 1} of ${fm.questions.length}</p>
+      ${fm.questions[fm.currentQ] ? `<div class="question-text" style="margin-top:1rem;">${esc(fm.questions[fm.currentQ].question)}</div>` : ''}
+    </div>`;
+}
+
+function updateTimer() {
+  const el = document.getElementById('fm-timer');
+  if (!el || !state.fastMoney) return;
+  el.textContent = state.fastMoney.timer;
+  el.className = 'fm-timer-display ' + (state.fastMoney.timer <= 5 ? 'crit' : state.fastMoney.timer <= 10 ? 'warn' : '');
+}
+
+function renderFastMoneyReveal(area) {
+  const fm = state.fastMoney;
+  if (!fm) return;
+  const total = fm.totalPoints;
+  const won = total >= 200;
+  const allRevealed = fm.revealIndex >= fm.questions.length * 2;
+
+  let runningTotal = 0;
+  const rows = fm.questions.map((q, i) => {
+    const a1 = fm.p1Answers[i];
+    const a2 = fm.p2Answers[i];
+    const p1pts = a1 ? a1.points : 0;
+    const p2pts = a2 ? a2.points : 0;
+    const showP1 = i < fm.revealIndex;
+    const showP2 = (i + fm.questions.length) < fm.revealIndex;
+    if (showP1) runningTotal += p1pts;
+    if (showP2) runningTotal += p2pts;
+
+    return `<tr>
+      <td>${esc(q.question)}</td>
+      <td>${a1 ? esc(a1.text) : '-'}</td>
+      <td class="pts">${showP1 ? p1pts : '?'}</td>
+      <td>${a2 ? esc(a2.text) : '-'}</td>
+      <td class="pts">${showP2 ? p2pts : '?'}</td>
+    </tr>`;
+  }).join('');
+
+  area.innerHTML = `
+    <div class="fm-display">
+      <table class="fm-table">
+        <thead><tr><th>Question</th><th>P1 Answer</th><th>P1</th><th>P2 Answer</th><th>P2</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="fm-total ${allRevealed ? (won ? 'win' : 'lose') : ''}" style="color:${allRevealed ? '' : '#f59e0b'};">
+        ${allRevealed ? `${total} POINTS ${won ? '- WINNER!' : ''}` : `${runningTotal}...`}
+      </div>
+    </div>`;
+}
+
+function renderGameOver(area) {
+  const t0 = state.teams[0].score;
+  const t1 = state.teams[1].score;
+  const winner = t0 > t1 ? 0 : t1 > t0 ? 1 : -1;
+  area.innerHTML = `
+    <div class="center-msg">
+      <h2>${winner >= 0 ? esc(state.teams[winner].name) : 'TIE GAME'}</h2>
+      <p>${winner >= 0 ? 'WINS!' : `${t0} - ${t1}`}</p>
+      <p style="font-size:2rem;color:#f59e0b;margin-top:0.5rem;">${t0} - ${t1}</p>
+    </div>`;
+}
+
+connect();
+</script>
+</body>
+</html>

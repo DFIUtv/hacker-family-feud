@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hacker Family Feud - Host Console</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0a0a0a;
+  color: #e5e5e5;
+  min-height: 100vh;
+}
+
+/* --- Header --- */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #222;
+  background: #0f0f0f;
+}
+header h1 {
+  color: #f59e0b;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+header h1 span { color: #666; font-weight: 400; font-size: 0.85rem; margin-left: 0.5rem; }
+
+.connection {
+  display: flex; align-items: center; gap: 8px; font-size: 0.8rem;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; flex-shrink: 0; }
+.dot.ok { background: #22c55e; }
+
+/* --- Layout --- */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 0;
+  height: calc(100vh - 50px);
+}
+
+/* --- Main Area --- */
+.main {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  border-left: 1px solid #222;
+  padding: 1rem;
+  overflow-y: auto;
+  background: #0d0d0d;
+}
+
+/* --- Scoreboard --- */
+.scoreboard {
+  display: flex; gap: 1rem; margin-bottom: 1.5rem;
+}
+.team-score {
+  flex: 1;
+  background: #111;
+  border: 2px solid #222;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.team-score.active { border-color: #f59e0b; }
+.team-score .name {
+  font-size: 0.9rem; color: #999; margin-bottom: 0.25rem;
+  cursor: text;
+}
+.team-score .name:focus {
+  outline: none; color: #fff;
+}
+.team-score .score { font-size: 2.5rem; font-weight: 800; color: #fff; }
+.team-score .adjust {
+  margin-top: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;
+}
+.team-score .adjust button {
+  background: #1a1a1a; border: 1px solid #333; color: #aaa;
+  padding: 2px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;
+}
+.team-score .adjust button:hover { background: #252525; border-color: #555; }
+
+/* --- Phase Banner --- */
+.phase-banner {
+  text-align: center; padding: 0.75rem; margin-bottom: 1rem;
+  background: #111; border: 1px solid #333; border-radius: 8px;
+  font-size: 1rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: #f59e0b;
+}
+.phase-banner .round-info {
+  font-size: 0.75rem; color: #666; font-weight: 400; letter-spacing: 0;
+  text-transform: none; margin-top: 0.25rem;
+}
+
+/* --- Survey Board --- */
+.survey-board {
+  background: #111; border: 2px solid #222; border-radius: 8px;
+  padding: 1rem; margin-bottom: 1rem;
+}
+.survey-question {
+  font-size: 1.1rem; font-weight: 600; color: #fff;
+  text-align: center; margin-bottom: 0.5rem;
+}
+.survey-tagline {
+  text-align: center; color: #666; font-size: 0.8rem; margin-bottom: 1rem;
+}
+
+.answer-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.6rem 0.75rem; border-radius: 6px;
+  margin-bottom: 0.35rem; cursor: pointer;
+  transition: background 0.15s;
+  background: #1a1a1a;
+  border: 1px solid #222;
+}
+.answer-row:hover { background: #252525; border-color: #444; }
+.answer-row.revealed { background: #1a2e1a; border-color: #22c55e40; }
+.answer-row .num {
+  font-weight: 700; color: #666; width: 1.5rem; text-align: center;
+  font-size: 0.9rem;
+}
+.answer-row .text { flex: 1; font-size: 0.95rem; }
+.answer-row .points {
+  font-weight: 700; color: #f59e0b; min-width: 3rem; text-align: right;
+}
+.answer-row.revealed .text { color: #22c55e; }
+.answer-row.revealed .num { color: #22c55e; }
+
+/* --- Strikes --- */
+.strikes {
+  display: flex; justify-content: center; gap: 1rem; margin: 1rem 0;
+}
+.strike-x {
+  font-size: 3rem; font-weight: 900; color: #333;
+  transition: color 0.3s;
+}
+.strike-x.active { color: #ef4444; }
+
+/* --- Controls --- */
+.controls {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;
+}
+
+button {
+  font-family: inherit;
+}
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: #ccc;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.btn:hover { background: #252525; border-color: #555; }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.btn.primary { border-color: #f59e0b; color: #fff; }
+.btn.primary:hover { background: #f59e0b; color: #000; }
+.btn.danger { border-color: #ef4444; color: #ef4444; }
+.btn.danger:hover { background: #ef4444; color: #fff; }
+.btn.success { border-color: #22c55e; color: #22c55e; }
+.btn.success:hover { background: #22c55e; color: #000; }
+
+/* --- Lobby --- */
+.lobby {
+  text-align: center; padding: 2rem;
+}
+.lobby select, .lobby input {
+  background: #111; border: 1px solid #333; color: #ccc;
+  padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.9rem;
+  font-family: inherit; width: 100%; max-width: 300px;
+  margin-bottom: 0.75rem;
+}
+.lobby label {
+  display: block; color: #888; font-size: 0.8rem; margin-bottom: 0.25rem;
+  text-align: left; max-width: 300px; margin-left: auto; margin-right: auto;
+}
+
+/* --- Fast Money --- */
+.fast-money-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0.5rem; margin: 1rem 0;
+}
+.fm-question {
+  background: #111; border: 1px solid #222; border-radius: 6px;
+  padding: 0.75rem; text-align: center;
+}
+.fm-question .q { font-size: 0.85rem; color: #999; margin-bottom: 0.5rem; }
+.fm-answer {
+  display: flex; gap: 0.5rem; align-items: center; justify-content: center;
+}
+.fm-answer input {
+  background: #1a1a1a; border: 1px solid #333; color: #fff;
+  padding: 0.35rem 0.5rem; border-radius: 4px; font-size: 0.85rem;
+  width: 120px; font-family: inherit;
+}
+.fm-answer .pts-input {
+  width: 50px; text-align: center;
+}
+.fm-timer {
+  font-size: 3rem; font-weight: 900; text-align: center;
+  margin: 1rem 0; color: #fff;
+}
+.fm-timer.warning { color: #f59e0b; }
+.fm-timer.danger { color: #ef4444; }
+
+/* --- Sidebar sections --- */
+.sidebar h3 {
+  font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: #555; margin-bottom: 0.5rem; margin-top: 1rem;
+}
+.sidebar h3:first-child { margin-top: 0; }
+
+.sidebar .meta {
+  font-size: 0.8rem; color: #666; line-height: 1.6;
+}
+.sidebar .meta strong { color: #999; }
+
+/* --- Buzzer panel --- */
+.buzzer-panel {
+  background: #111; border: 1px solid #222; border-radius: 6px;
+  padding: 0.75rem; margin-bottom: 0.75rem;
+}
+.buzzer-panel input {
+  background: #1a1a1a; border: 1px solid #333; color: #ccc;
+  padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;
+  width: 100%; font-family: monospace; margin-bottom: 0.5rem;
+}
+
+/* --- Face-off panel --- */
+.faceoff-panel {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+  margin: 1rem 0;
+}
+.faceoff-team {
+  background: #111; border: 2px solid #222; border-radius: 8px;
+  padding: 1rem; text-align: center;
+}
+.faceoff-team.buzzed { border-color: #f59e0b; }
+.faceoff-team h4 { font-size: 0.9rem; color: #888; margin-bottom: 0.5rem; }
+.faceoff-team select {
+  background: #1a1a1a; border: 1px solid #333; color: #ccc;
+  padding: 0.4rem; border-radius: 4px; font-size: 0.85rem;
+  width: 100%; font-family: inherit; margin-top: 0.5rem;
+}
+
+/* Keyboard hint */
+.kbd-hint {
+  font-size: 0.7rem; color: #444; text-align: center; margin-top: 0.5rem;
+}
+kbd {
+  background: #222; padding: 1px 5px; border-radius: 3px;
+  border: 1px solid #333; font-family: monospace; font-size: 0.7rem;
+}
+
+/* Round points display */
+.round-points {
+  text-align: center; margin: 0.5rem 0;
+  font-size: 1.2rem; font-weight: 700; color: #f59e0b;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FAMILY FEUD<span>Host Console</span></h1>
+  <div class="connection">
+    <div id="dot" class="dot"></div>
+    <span id="conn-text">Connecting...</span>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="main" id="main-area">
+    <!-- Dynamic content rendered here -->
+  </div>
+
+  <div class="sidebar">
+    <h3>Game Info</h3>
+    <div class="meta" id="game-info">
+      <strong>Phase:</strong> Lobby<br>
+      <strong>Round:</strong> --<br>
+      <strong>Multiplier:</strong> --<br>
+    </div>
+
+    <h3>Buzzer</h3>
+    <div class="buzzer-panel">
+      <input type="text" id="buzzer-url" value="ws://localhost:3001" placeholder="ws://host:port">
+      <button class="btn" id="buzzer-btn" onclick="toggleBuzzer()" style="width:100%;font-size:0.8rem;">Connect Buzzer</button>
+      <div id="buzzer-status" style="font-size:0.75rem;color:#666;margin-top:0.4rem;">Disconnected</div>
+    </div>
+
+    <h3>Board View</h3>
+    <div style="margin-bottom:0.75rem;">
+      <button class="btn" onclick="window.open('board.html','_blank')" style="width:100%;font-size:0.8rem;">Open Board View</button>
+    </div>
+
+    <h3>Quick Actions</h3>
+    <div style="display:flex;flex-direction:column;gap:0.4rem;">
+      <button class="btn danger" onclick="resetGame()" style="font-size:0.8rem;">Reset Game</button>
+      <button class="btn" onclick="endGame()" style="font-size:0.8rem;">End Game</button>
+    </div>
+
+    <div class="kbd-hint" style="margin-top:1.5rem;">
+      <kbd>X</kbd> Strike &nbsp;
+      <kbd>Space</kbd> Next &nbsp;
+      <kbd>1</kbd>-<kbd>8</kbd> Reveal answer
+    </div>
+  </div>
+</div>
+
+<script>
+// --- WebSocket ---
+const WS_URL = new URLSearchParams(location.search).get('ws') || `ws://${location.hostname}:${location.port || 3003}`;
+let ws = null;
+let state = null;
+let buzzerWs = null;
+
+function connect() {
+  ws = new WebSocket(WS_URL);
+  ws.onopen = () => {
+    setConn(true, 'Connected');
+    ws.send(JSON.stringify({ type: 'register-host' }));
+  };
+  ws.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'game-state') {
+      state = msg.state;
+      render();
+    }
+    if (msg.type === 'timer-tick' && state && state.fastMoney) {
+      state.fastMoney.timer = msg.timer;
+      renderFastMoneyTimer();
+    }
+    if (msg.type === 'strike') {
+      renderStrikes();
+    }
+  };
+  ws.onclose = () => { setConn(false, 'Disconnected'); setTimeout(connect, 2000); };
+  ws.onerror = () => ws.close();
+}
+
+function setConn(ok, text) {
+  document.getElementById('dot').classList.toggle('ok', ok);
+  document.getElementById('conn-text').textContent = text;
+}
+
+function send(msg) {
+  if (ws && ws.readyState === 1) ws.send(JSON.stringify(msg));
+}
+
+// --- Buzzer Connection ---
+function toggleBuzzer() {
+  if (buzzerWs && buzzerWs.readyState <= 1) { buzzerWs.close(); return; }
+  const url = document.getElementById('buzzer-url').value.trim();
+  if (!url) return;
+  buzzerWs = new WebSocket(url);
+  buzzerWs.onopen = () => {
+    document.getElementById('buzzer-status').textContent = 'Connected';
+    document.getElementById('buzzer-btn').textContent = 'Disconnect';
+    buzzerWs.send(JSON.stringify({ type: 'register-host' }));
+  };
+  buzzerWs.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'buzzed' && state && state.phase === 'faceoff') {
+      // Map buzz to a team (host resolves manually or via contestant mapping)
+      showBuzzNotification(msg.name);
+    }
+  };
+  buzzerWs.onclose = () => {
+    document.getElementById('buzzer-status').textContent = 'Disconnected';
+    document.getElementById('buzzer-btn').textContent = 'Connect Buzzer';
+  };
+  buzzerWs.onerror = () => buzzerWs.close();
+}
+
+function showBuzzNotification(name) {
+  // Brief visual notification
+  const el = document.getElementById('buzz-notify');
+  if (el) {
+    el.textContent = `BUZZED: ${name}`;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 3000);
+  }
+}
+
+function unlockBuzzers() {
+  if (buzzerWs && buzzerWs.readyState === 1) {
+    buzzerWs.send(JSON.stringify({ type: 'unlock' }));
+  }
+}
+
+function lockBuzzers() {
+  if (buzzerWs && buzzerWs.readyState === 1) {
+    buzzerWs.send(JSON.stringify({ type: 'lock' }));
+  }
+}
+
+// --- Game Actions ---
+function resetGame() { if (confirm('Reset game? All progress will be lost.')) send({ type: 'reset-game' }); }
+function endGame() { send({ type: 'end-game' }); }
+
+// --- Render ---
+function render() {
+  if (!state) return;
+  const area = document.getElementById('main-area');
+  updateGameInfo();
+
+  switch (state.phase) {
+    case 'lobby': renderLobby(area); break;
+    case 'faceoff': renderFaceoff(area); break;
+    case 'play_pass': renderPlayPass(area); break;
+    case 'play': renderPlay(area); break;
+    case 'steal': renderSteal(area); break;
+    case 'score': renderScore(area); break;
+    case 'fast_money_setup': renderFastMoneySetup(area); break;
+    case 'fast_money_p1':
+    case 'fast_money_p2': renderFastMoney(area); break;
+    case 'fast_money_reveal': renderFastMoneyReveal(area); break;
+    case 'game_over': renderGameOver(area); break;
+    default: area.innerHTML = `<div class="lobby"><p>Unknown phase: ${state.phase}</p></div>`;
+  }
+}
+
+function updateGameInfo() {
+  const multiplier = state.multipliers[state.round] || 3;
+  const multiplierLabel = multiplier === 1 ? 'Single' : multiplier === 2 ? 'DOUBLE' : 'TRIPLE';
+  document.getElementById('game-info').innerHTML = `
+    <strong>Phase:</strong> ${state.phase.replace(/_/g, ' ')}<br>
+    <strong>Round:</strong> ${state.round + 1} of ${state.surveyFile ? '4+' : '--'}<br>
+    <strong>Multiplier:</strong> ${multiplierLabel} (${multiplier}x)<br>
+    <strong>Survey:</strong> ${state.surveyFile || 'None loaded'}
+  `;
+}
+
+function renderScoreboard() {
+  return `<div class="scoreboard">
+    ${state.teams.map((t, i) => `
+      <div class="team-score ${state.controllingTeam === i ? 'active' : ''}">
+        <div class="name" contenteditable="true" data-team="${i}"
+          onblur="renameTeam(${i}, this.textContent)">${esc(t.name)}</div>
+        <div class="score">${t.score}</div>
+        <div class="adjust">
+          <button onclick="send({type:'adjust-score',team:${i},amount:-10})">-10</button>
+          <button onclick="send({type:'adjust-score',team:${i},amount:10})">+10</button>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function renameTeam(idx, name) {
+  const msg = { type: 'set-teams' };
+  if (idx === 0) msg.team1 = name;
+  else msg.team2 = name;
+  send(msg);
+}
+
+function renderPhaseBanner(text, sub) {
+  return `<div class="phase-banner">${text}${sub ? `<div class="round-info">${sub}</div>` : ''}</div>`;
+}
+
+function renderAnswerBoard(clickable) {
+  if (!state.currentQuestion) return '';
+  const multiplier = state.multipliers[state.round] || 3;
+  return `<div class="survey-board">
+    <div class="survey-question">${esc(state.currentQuestion.question)}</div>
+    <div class="survey-tagline">${esc(state.currentQuestion.survey)}</div>
+    ${state.currentQuestion.answers.map((a, i) => `
+      <div class="answer-row ${a.revealed ? 'revealed' : ''}"
+        ${clickable && !a.revealed ? `onclick="send({type:'reveal-answer',index:${i}})"` : ''}>
+        <span class="num">${i + 1}</span>
+        <span class="text">${a.revealed ? esc(a.text) : '&mdash;&mdash;&mdash;'}</span>
+        <span class="points">${a.revealed ? a.points * multiplier : ''}</span>
+      </div>
+    `).join('')}
+  </div>
+  <div class="round-points">Round: ${state.roundPoints} pts</div>`;
+}
+
+function renderStrikesHTML() {
+  return `<div class="strikes" id="strikes-area">
+    ${[0, 1, 2].map(i => `<span class="strike-x ${state.strikes > i ? 'active' : ''}">&#10006;</span>`).join('')}
+  </div>`;
+}
+
+function renderStrikes() {
+  const el = document.getElementById('strikes-area');
+  if (el && state) {
+    el.innerHTML = [0, 1, 2].map(i =>
+      `<span class="strike-x ${state.strikes > i ? 'active' : ''}">&#10006;</span>`
+    ).join('');
+  }
+}
+
+// --- Phase Renderers ---
+
+function renderLobby(area) {
+  area.innerHTML = `
+    <div class="lobby">
+      <h2 style="color:#f59e0b;margin-bottom:1.5rem;">Hacker Family Feud</h2>
+      <div id="survey-list">Loading surveys...</div>
+      <div style="margin-top:1.5rem;">
+        <label>Team 1 Name</label>
+        <input type="text" id="team1-name" value="${esc(state.teams[0].name)}" placeholder="Team 1">
+        <label>Team 2 Name</label>
+        <input type="text" id="team2-name" value="${esc(state.teams[1].name)}" placeholder="Team 2">
+      </div>
+      <div style="margin-top:1rem;">
+        <button class="btn primary" onclick="startGame()">Start Game</button>
+      </div>
+    </div>`;
+  loadSurveyList();
+}
+
+async function loadSurveyList() {
+  try {
+    const res = await fetch('/api/surveys');
+    const surveys = await res.json();
+    const el = document.getElementById('survey-list');
+    if (!el) return;
+    if (surveys.length === 0) {
+      el.innerHTML = '<p style="color:#666;">No surveys found in surveys/ folder.</p>';
+      return;
+    }
+    el.innerHTML = `
+      <label>Select Survey</label>
+      <select id="survey-select">
+        ${surveys.map(s => `<option value="${esc(s.file)}">${esc(s.name)} (${s.rounds} rounds, ${s.fastMoney} FM)</option>`).join('')}
+      </select>`;
+  } catch {
+    const el = document.getElementById('survey-list');
+    if (el) el.innerHTML = '<p style="color:#ef4444;">Failed to load surveys.</p>';
+  }
+}
+
+function startGame() {
+  const select = document.getElementById('survey-select');
+  if (!select) return;
+  const t1 = document.getElementById('team1-name');
+  const t2 = document.getElementById('team2-name');
+  send({ type: 'load-survey', file: select.value });
+  setTimeout(() => {
+    send({ type: 'set-teams', team1: t1?.value || 'Team 1', team2: t2?.value || 'Team 2' });
+    send({ type: 'start-round', round: 0 });
+  }, 200);
+}
+
+function renderFaceoff(area) {
+  const q = state.currentQuestion;
+  area.innerHTML = `
+    ${renderScoreboard()}
+    ${renderPhaseBanner('FACE-OFF', `Round ${state.round + 1}`)}
+    ${q ? `<div class="survey-board">
+      <div class="survey-question">${esc(q.question)}</div>
+      <div class="survey-tagline">${esc(q.survey)}</div>
+    </div>` : ''}
+    <div id="buzz-notify" style="display:none;text-align:center;font-size:1.5rem;font-weight:800;color:#f59e0b;padding:0.5rem;"></div>
+    <div class="faceoff-panel">
+      ${state.teams.map((t, i) => `
+        <div class="faceoff-team ${state.faceoffBuzzer === i ? 'buzzed' : ''}">
+          <h4>${esc(t.name)}</h4>
+          <button class="btn ${state.faceoffBuzzer === i ? 'primary' : ''}"
+            onclick="send({type:'faceoff-buzz',team:${i}})">
+            ${state.faceoffBuzzer === i ? 'BUZZED FIRST' : 'Buzzed'}
+          </button>
+          <select onchange="send({type:'faceoff-answer',team:${i},answerIndex:parseInt(this.value),text:this.options[this.selectedIndex].text})">
+            <option value="-1">-- Answer --</option>
+            ${q ? q.answers.map((a, ai) => `<option value="${ai}" ${state.faceoffAnswers[i]?.answerIndex === ai ? 'selected' : ''}>${esc(a.text)} (${a.points})</option>`).join('') : ''}
+          </select>
+        </div>
+      `).join('')}
+    </div>
+    <div class="controls" style="justify-content:center;">
+      <button class="btn" onclick="unlockBuzzers()">Unlock Buzzers</button>
+      <button class="btn primary" onclick="send({type:'faceoff-resolve'})">Resolve Face-Off</button>
+      <button class="btn" onclick="send({type:'faceoff-resolve',winner:0})">Team 1 Wins</button>
+      <button class="btn" onclick="send({type:'faceoff-resolve',winner:1})">Team 2 Wins</button>
+    </div>`;
+}
+
+function renderPlayPass(area) {
+  area.innerHTML = `
+    ${renderScoreboard()}
+    ${renderPhaseBanner('PLAY OR PASS?', `${esc(state.teams[state.controllingTeam].name)} won the face-off`)}
+    ${renderAnswerBoard(false)}
+    <div class="controls" style="justify-content:center;">
+      <button class="btn primary" style="font-size:1.1rem;padding:0.8rem 2rem;"
+        onclick="send({type:'play-pass',action:'play'})">
+        PLAY
+      </button>
+      <button class="btn" style="font-size:1.1rem;padding:0.8rem 2rem;"
+        onclick="send({type:'play-pass',action:'pass'})">
+        PASS
+      </button>
+    </div>`;
+}
+
+function renderPlay(area) {
+  area.innerHTML = `
+    ${renderScoreboard()}
+    ${renderPhaseBanner('PLAY', `${esc(state.teams[state.controllingTeam].name)} is playing`)}
+    ${renderAnswerBoard(true)}
+    ${renderStrikesHTML()}
+    <div class="controls" style="justify-content:center;">
+      <button class="btn danger" onclick="send({type:'strike'})" ${state.strikes >= 3 ? 'disabled' : ''}>
+        STRIKE &#10006;
+      </button>
+    </div>`;
+}
+
+function renderSteal(area) {
+  const stealTeam = state.controllingTeam === 0 ? 1 : 0;
+  area.innerHTML = `
+    ${renderScoreboard()}
+    ${renderPhaseBanner('STEAL!', `${esc(state.teams[stealTeam].name)} can steal ${state.roundPoints} points`)}
+    ${renderAnswerBoard(false)}
+    ${renderStrikesHTML()}
+    <div style="text-align:center;margin:1rem 0;">
+      <p style="color:#f59e0b;font-size:1.1rem;font-weight:600;">
+        ${esc(state.teams[stealTeam].name)}: Pick the steal answer
+      </p>
+      <select id="steal-answer" style="background:#111;border:1px solid #333;color:#ccc;padding:0.5rem;border-radius:6px;font-size:0.9rem;margin-top:0.5rem;">
+        <option value="-1">-- Select answer --</option>
+        ${state.currentQuestion ? state.currentQuestion.answers.map((a, i) =>
+          !a.revealed ? `<option value="${i}">${esc(a.text)} (${a.points})</option>` : ''
+        ).join('') : ''}
+      </select>
+    </div>
+    <div class="controls" style="justify-content:center;">
+      <button class="btn success" onclick="resolveSteal(true)">Steal Successful</button>
+      <button class="btn danger" onclick="resolveSteal(false)">Steal Failed</button>
+    </div>`;
+}
+
+function resolveSteal(success) {
+  const sel = document.getElementById('steal-answer');
+  const idx = sel ? parseInt(sel.value) : -1;
+  send({ type: 'steal-result', success, answerIndex: idx });
+}
+
+function renderScore(area) {
+  area.innerHTML = `
+    ${renderScoreboard()}
+    ${renderPhaseBanner('ROUND COMPLETE')}
+    ${renderAnswerBoard(false)}
+    <div class="controls" style="justify-content:center;margin-top:1rem;">
+      <button class="btn primary" style="font-size:1.1rem;padding:0.8rem 2rem;"
+        onclick="send({type:'next-round'})">
+        ${state.teams.some(t => t.score >= state.winTarget) ? 'Go to Fast Money' : 'Next Round'}
+      </button>
+    </div>`;
+}
+
+// --- Fast Money ---
+
+function renderFastMoneySetup(area) {
+  const winner = state.fastMoney?.winningTeam ?? 0;
+  area.innerHTML = `
+    ${renderScoreboard()}
+    ${renderPhaseBanner('FAST MONEY', `${esc(state.teams[winner].name)} plays Fast Money!`)}
+    <div style="text-align:center;padding:2rem;">
+      <p style="color:#999;margin-bottom:1rem;">Player 1 answers 5 questions in 20 seconds.<br>Player 2 answers the same 5 in 25 seconds.</p>
+      <p style="color:#f59e0b;font-size:1.2rem;font-weight:700;margin-bottom:1rem;">Target: 200 points to win!</p>
+      <button class="btn primary" style="font-size:1.1rem;padding:0.8rem 2rem;"
+        onclick="send({type:'fast-money-start-timer'})">Start Player 1</button>
+    </div>`;
+}
+
+function renderFastMoney(area) {
+  const fm = state.fastMoney;
+  if (!fm) return;
+  const player = fm.currentPlayer;
+  const answers = player === 1 ? fm.p1Answers : fm.p2Answers;
+  const timerClass = fm.timer <= 5 ? 'danger' : fm.timer <= 10 ? 'warning' : '';
+
+  area.innerHTML = `
+    ${renderScoreboard()}
+    ${renderPhaseBanner(`FAST MONEY - PLAYER ${player}`, `${fm.questions.length} questions`)}
+    <div class="fm-timer ${timerClass}" id="fm-timer">${fm.timer}</div>
+    <div style="max-width:500px;margin:0 auto;">
+      ${fm.questions.map((q, i) => {
+        const a = answers[i];
+        const isCurrent = i === fm.currentQ;
+        return `<div class="fm-question" style="${isCurrent ? 'border-color:#f59e0b;' : ''}">
+          <div class="q">${i + 1}. ${esc(q.question)}</div>
+          <div class="fm-answer">
+            <input type="text" id="fm-ans-${i}" value="${a ? esc(a.text) : ''}" placeholder="Answer..."
+              onchange="updateFmAnswer(${i})">
+            <input type="number" class="pts-input" id="fm-pts-${i}" value="${a ? a.points : 0}" min="0" max="100"
+              onchange="updateFmAnswer(${i})">
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="controls" style="justify-content:center;margin-top:1rem;">
+      <button class="btn" onclick="send({type:'fast-money-next-q'})"
+        ${fm.currentQ >= fm.questions.length - 1 ? 'disabled' : ''}>Next Question</button>
+      <button class="btn" onclick="send({type:'fast-money-stop-timer'})">Stop Timer</button>
+      ${player === 1 ? `<button class="btn primary" onclick="send({type:'fast-money-player2'})">Start Player 2</button>` : ''}
+      ${player === 2 ? `<button class="btn primary" onclick="send({type:'fast-money-reveal'})">Reveal Scores</button>` : ''}
+    </div>`;
+}
+
+function updateFmAnswer(idx) {
+  const text = document.getElementById(`fm-ans-${idx}`)?.value || '';
+  const points = parseInt(document.getElementById(`fm-pts-${idx}`)?.value || '0');
+  // Update currentQ to this one
+  if (state.fastMoney) state.fastMoney.currentQ = idx;
+  send({ type: 'fast-money-answer', text, points, index: idx });
+}
+
+function renderFastMoneyTimer() {
+  const el = document.getElementById('fm-timer');
+  if (!el || !state.fastMoney) return;
+  const fm = state.fastMoney;
+  el.textContent = fm.timer;
+  el.className = 'fm-timer ' + (fm.timer <= 5 ? 'danger' : fm.timer <= 10 ? 'warning' : '');
+}
+
+function renderFastMoneyReveal(area) {
+  const fm = state.fastMoney;
+  if (!fm) return;
+
+  let runningTotal = 0;
+  const rows = fm.questions.map((q, i) => {
+    const a1 = fm.p1Answers[i];
+    const a2 = fm.p2Answers[i];
+    const showP1 = i < fm.revealIndex;
+    const showP2 = i < (fm.revealIndex - fm.questions.length);
+    const p1pts = a1 ? a1.points : 0;
+    const p2pts = a2 ? a2.points : 0;
+    if (i < fm.revealIndex) runningTotal += p1pts;
+    if (i + fm.questions.length < fm.revealIndex) runningTotal += p2pts;
+    return `<tr>
+      <td style="padding:0.5rem;border-bottom:1px solid #222;">${esc(q.question)}</td>
+      <td style="padding:0.5rem;border-bottom:1px solid #222;text-align:center;">${a1 ? esc(a1.text) : '-'}</td>
+      <td style="padding:0.5rem;border-bottom:1px solid #222;text-align:center;color:#f59e0b;font-weight:700;">${i < fm.revealIndex ? p1pts : '?'}</td>
+      <td style="padding:0.5rem;border-bottom:1px solid #222;text-align:center;">${a2 ? esc(a2.text) : '-'}</td>
+      <td style="padding:0.5rem;border-bottom:1px solid #222;text-align:center;color:#f59e0b;font-weight:700;">${i + fm.questions.length < fm.revealIndex ? p2pts : '?'}</td>
+    </tr>`;
+  }).join('');
+
+  const allRevealed = fm.revealIndex >= fm.questions.length * 2;
+  const total = fm.totalPoints;
+  const won = total >= 200;
+
+  area.innerHTML = `
+    ${renderScoreboard()}
+    ${renderPhaseBanner('FAST MONEY REVEAL')}
+    <table style="width:100%;max-width:700px;margin:1rem auto;border-collapse:collapse;">
+      <thead>
+        <tr style="color:#666;font-size:0.8rem;text-transform:uppercase;">
+          <th style="padding:0.5rem;text-align:left;">Question</th>
+          <th style="padding:0.5rem;">P1 Answer</th>
+          <th style="padding:0.5rem;">P1 Pts</th>
+          <th style="padding:0.5rem;">P2 Answer</th>
+          <th style="padding:0.5rem;">P2 Pts</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="text-align:center;font-size:2rem;font-weight:900;color:${allRevealed ? (won ? '#22c55e' : '#ef4444') : '#f59e0b'};margin:1rem 0;">
+      ${allRevealed ? `TOTAL: ${total} ${won ? '- THEY WIN!' : '- Not enough!'}` : `Revealing... (${fm.revealIndex} / ${fm.questions.length * 2})`}
+    </div>
+    <div class="controls" style="justify-content:center;">
+      <button class="btn primary" onclick="send({type:'fast-money-reveal-next'})"
+        ${allRevealed ? 'disabled' : ''}>Reveal Next</button>
+      ${allRevealed ? `<button class="btn" onclick="send({type:'end-game'})">End Game</button>` : ''}
+    </div>`;
+}
+
+function renderGameOver(area) {
+  const winner = state.teams[0].score > state.teams[1].score ? 0 : state.teams[1].score > state.teams[0].score ? 1 : -1;
+  area.innerHTML = `
+    ${renderScoreboard()}
+    ${renderPhaseBanner('GAME OVER')}
+    <div style="text-align:center;padding:2rem;">
+      <p style="font-size:2rem;font-weight:900;color:#f59e0b;">
+        ${winner >= 0 ? esc(state.teams[winner].name) + ' WINS!' : 'TIE GAME!'}
+      </p>
+      <p style="color:#666;margin-top:1rem;">${state.teams[0].score} - ${state.teams[1].score}</p>
+      <button class="btn primary" style="margin-top:1.5rem;" onclick="resetGame()">New Game</button>
+    </div>`;
+}
+
+// --- Keyboard Shortcuts ---
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.isContentEditable) return;
+  if (!state) return;
+
+  const key = e.key.toLowerCase();
+
+  // Number keys 1-8: reveal answer
+  if (state.phase === 'play' && key >= '1' && key <= '8') {
+    const idx = parseInt(key) - 1;
+    send({ type: 'reveal-answer', index: idx });
+    return;
+  }
+
+  // X: strike
+  if (key === 'x' && state.phase === 'play') {
+    send({ type: 'strike' });
+    return;
+  }
+
+  // Space: context-dependent "next" action
+  if (key === ' ') {
+    e.preventDefault();
+    if (state.phase === 'score') send({ type: 'next-round' });
+    if (state.phase === 'fast_money_p1' || state.phase === 'fast_money_p2') send({ type: 'fast-money-next-q' });
+    if (state.phase === 'fast_money_reveal') send({ type: 'fast-money-reveal-next' });
+    return;
+  }
+});
+
+// --- Utilities ---
+function esc(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// --- Init ---
+connect();
+</script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "Hacker Family Feud Fast Money question sets",
+    "totalSets": 10,
+    "questionsPerSet": 5,
+    "notes": "Fast Money questions need to be answerable in ~4 seconds. Short prompts, instinctive answers."
+  },
+  "fastMoneySets": [
+    {
+      "id": 1,
+      "name": "Ports & Protocols",
+      "questions": [
+        {
+          "question": "Name a port number every hacker knows",
+          "answers": [
+            { "answer": "80", "points": 30 },
+            { "answer": "443", "points": 25 },
+            { "answer": "22", "points": 20 },
+            { "answer": "21", "points": 10 },
+            { "answer": "3389", "points": 8 },
+            { "answer": "8080", "points": 4 }
+          ]
+        },
+        {
+          "question": "Name a color used in cybersecurity team names",
+          "answers": [
+            { "answer": "Red", "points": 35 },
+            { "answer": "Blue", "points": 30 },
+            { "answer": "Purple", "points": 15 },
+            { "answer": "White", "points": 10 },
+            { "answer": "Black", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a default password people never change",
+          "answers": [
+            { "answer": "admin", "points": 35 },
+            { "answer": "password", "points": 25 },
+            { "answer": "1234 / 12345", "points": 18 },
+            { "answer": "root", "points": 10 },
+            { "answer": "guest", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a file extension that scares you in an email attachment",
+          "answers": [
+            { "answer": ".exe", "points": 40 },
+            { "answer": ".zip", "points": 20 },
+            { "answer": ".bat / .cmd", "points": 15 },
+            { "answer": ".js", "points": 10 },
+            { "answer": ".docm / .xlsm (macro-enabled)", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a three-letter security acronym",
+          "answers": [
+            { "answer": "VPN", "points": 28 },
+            { "answer": "MFA", "points": 22 },
+            { "answer": "SOC", "points": 18 },
+            { "answer": "IDS", "points": 12 },
+            { "answer": "APT", "points": 8 },
+            { "answer": "XSS", "points": 6 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Hacker Culture",
+      "questions": [
+        {
+          "question": "Name a movie about hacking",
+          "answers": [
+            { "answer": "Hackers (1995)", "points": 30 },
+            { "answer": "The Matrix", "points": 25 },
+            { "answer": "WarGames", "points": 20 },
+            { "answer": "Sneakers", "points": 10 },
+            { "answer": "Swordfish", "points": 8 },
+            { "answer": "Mr. Robot (it's a show, but they'll say it)", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a beverage at a hacker's desk right now",
+          "answers": [
+            { "answer": "Coffee", "points": 35 },
+            { "answer": "Energy drink / Red Bull / Monster", "points": 25 },
+            { "answer": "Beer", "points": 15 },
+            { "answer": "Water", "points": 12 },
+            { "answer": "Mountain Dew / soda", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name an operating system",
+          "answers": [
+            { "answer": "Linux", "points": 32 },
+            { "answer": "Windows", "points": 28 },
+            { "answer": "macOS", "points": 20 },
+            { "answer": "Android", "points": 8 },
+            { "answer": "BSD / FreeBSD", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a hacker hoodie color",
+          "answers": [
+            { "answer": "Black", "points": 45 },
+            { "answer": "Gray", "points": 22 },
+            { "answer": "Dark blue / navy", "points": 12 },
+            { "answer": "Green (Matrix green)", "points": 8 },
+            { "answer": "Red", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a thing hackers collect",
+          "answers": [
+            { "answer": "Stickers", "points": 30 },
+            { "answer": "Conference badges", "points": 25 },
+            { "answer": "Domains", "points": 15 },
+            { "answer": "Challenge coins", "points": 12 },
+            { "answer": "Old hardware / retro tech", "points": 10 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Dev Life",
+      "questions": [
+        {
+          "question": "Name a text editor or IDE",
+          "answers": [
+            { "answer": "VS Code", "points": 35 },
+            { "answer": "Vim / Neovim", "points": 25 },
+            { "answer": "JetBrains / IntelliJ", "points": 15 },
+            { "answer": "Emacs", "points": 10 },
+            { "answer": "Sublime Text", "points": 8 },
+            { "answer": "Nano", "points": 4 }
+          ]
+        },
+        {
+          "question": "Name a version control platform",
+          "answers": [
+            { "answer": "GitHub", "points": 45 },
+            { "answer": "GitLab", "points": 25 },
+            { "answer": "Bitbucket", "points": 15 },
+            { "answer": "SVN / Subversion", "points": 8 },
+            { "answer": "Sourcehut / Gitea", "points": 4 }
+          ]
+        },
+        {
+          "question": "Name something that breaks when you update dependencies",
+          "answers": [
+            { "answer": "Everything", "points": 35 },
+            { "answer": "Tests", "points": 22 },
+            { "answer": "The build / CI pipeline", "points": 18 },
+            { "answer": "Authentication", "points": 10 },
+            { "answer": "Your will to live", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a cloud provider",
+          "answers": [
+            { "answer": "AWS", "points": 40 },
+            { "answer": "Azure", "points": 25 },
+            { "answer": "Google Cloud / GCP", "points": 18 },
+            { "answer": "DigitalOcean", "points": 8 },
+            { "answer": "Oracle Cloud", "points": 4 }
+          ]
+        },
+        {
+          "question": "Name something in a developer's .gitignore",
+          "answers": [
+            { "answer": "node_modules", "points": 35 },
+            { "answer": ".env / environment files", "points": 25 },
+            { "answer": ".DS_Store", "points": 18 },
+            { "answer": "Build output / dist", "points": 10 },
+            { "answer": "IDE config files", "points": 7 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Incident Response",
+      "questions": [
+        {
+          "question": "Name the first thing you do when you discover a breach",
+          "answers": [
+            { "answer": "Panic", "points": 30 },
+            { "answer": "Contain / isolate the system", "points": 25 },
+            { "answer": "Call management / CISO", "points": 18 },
+            { "answer": "Check the logs", "points": 12 },
+            { "answer": "Update your resume", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a thing that gets blamed after a security incident",
+          "answers": [
+            { "answer": "The intern / junior employee", "points": 28 },
+            { "answer": "Sophisticated nation-state actors", "points": 24 },
+            { "answer": "A third-party vendor", "points": 18 },
+            { "answer": "Legacy systems", "points": 14 },
+            { "answer": "Budget constraints", "points": 10 }
+          ]
+        },
+        {
+          "question": "Name a social media platform where breaches get announced first",
+          "answers": [
+            { "answer": "Twitter / X", "points": 40 },
+            { "answer": "Reddit", "points": 22 },
+            { "answer": "Mastodon", "points": 12 },
+            { "answer": "Hacker News", "points": 10 },
+            { "answer": "LinkedIn", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name something you'd find in a ransomware note",
+          "answers": [
+            { "answer": "Bitcoin wallet address", "points": 35 },
+            { "answer": "A deadline / timer", "points": 22 },
+            { "answer": "Contact email (protonmail)", "points": 15 },
+            { "answer": "Instructions in broken English", "points": 12 },
+            { "answer": "A polite customer service tone", "points": 10 }
+          ]
+        },
+        {
+          "question": "Name a thing companies say in breach notification emails",
+          "answers": [
+            { "answer": "We take security seriously", "points": 35 },
+            { "answer": "No financial data was accessed", "points": 22 },
+            { "answer": "We recommend changing your password", "points": 18 },
+            { "answer": "A small number of users were affected", "points": 12 },
+            { "answer": "We're offering free credit monitoring", "points": 8 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Network & Infrastructure",
+      "questions": [
+        {
+          "question": "Name a DNS record type",
+          "answers": [
+            { "answer": "A", "points": 35 },
+            { "answer": "CNAME", "points": 22 },
+            { "answer": "MX", "points": 18 },
+            { "answer": "TXT", "points": 12 },
+            { "answer": "AAAA", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a wireless encryption standard",
+          "answers": [
+            { "answer": "WPA2", "points": 32 },
+            { "answer": "WPA3", "points": 25 },
+            { "answer": "WEP", "points": 20 },
+            { "answer": "WPA", "points": 12 },
+            { "answer": "Open / None (does that count?)", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a network scanning tool",
+          "answers": [
+            { "answer": "Nmap", "points": 40 },
+            { "answer": "Wireshark", "points": 22 },
+            { "answer": "Masscan", "points": 12 },
+            { "answer": "Nessus", "points": 10 },
+            { "answer": "Angry IP Scanner", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a thing in a server rack that's always blinking",
+          "answers": [
+            { "answer": "Switch / network switch", "points": 32 },
+            { "answer": "Router", "points": 22 },
+            { "answer": "Server NIC / network card", "points": 18 },
+            { "answer": "UPS / power supply", "points": 12 },
+            { "answer": "Firewall appliance", "points": 10 }
+          ]
+        },
+        {
+          "question": "Name a VPN provider",
+          "answers": [
+            { "answer": "NordVPN", "points": 30 },
+            { "answer": "ExpressVPN", "points": 22 },
+            { "answer": "WireGuard (self-hosted)", "points": 18 },
+            { "answer": "Mullvad", "points": 12 },
+            { "answer": "ProtonVPN", "points": 10 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Old School",
+      "questions": [
+        {
+          "question": "Name a retro operating system",
+          "answers": [
+            { "answer": "DOS / MS-DOS", "points": 32 },
+            { "answer": "Windows 95/98", "points": 25 },
+            { "answer": "Amiga OS", "points": 12 },
+            { "answer": "OS/2", "points": 10 },
+            { "answer": "BeOS", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a sound from dial-up internet",
+          "answers": [
+            { "answer": "The screech / handshake noise", "points": 40 },
+            { "answer": "Static / hiss", "points": 22 },
+            { "answer": "Bong bong bong (dialing)", "points": 15 },
+            { "answer": "The silence before connection", "points": 10 },
+            { "answer": "Mom picking up the phone", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name an early internet chat platform",
+          "answers": [
+            { "answer": "IRC", "points": 30 },
+            { "answer": "AIM / AOL Instant Messenger", "points": 25 },
+            { "answer": "ICQ", "points": 18 },
+            { "answer": "MSN Messenger", "points": 12 },
+            { "answer": "Yahoo Messenger", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a thing on a floppy disk",
+          "answers": [
+            { "answer": "A bootloader / boot disk", "points": 28 },
+            { "answer": "A game (Oregon Trail, etc.)", "points": 25 },
+            { "answer": "A virus", "points": 18 },
+            { "answer": "Word documents", "points": 12 },
+            { "answer": "AOL free trial", "points": 10 }
+          ]
+        },
+        {
+          "question": "Name a BBS or early online service",
+          "answers": [
+            { "answer": "AOL", "points": 32 },
+            { "answer": "CompuServe", "points": 22 },
+            { "answer": "Prodigy", "points": 15 },
+            { "answer": "FidoNet", "points": 10 },
+            { "answer": "The WELL", "points": 8 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Corporate Security Theater",
+      "questions": [
+        {
+          "question": "Name a thing in mandatory security training",
+          "answers": [
+            { "answer": "Don't click suspicious links", "points": 35 },
+            { "answer": "Report phishing emails", "points": 25 },
+            { "answer": "Lock your screen when you leave", "points": 18 },
+            { "answer": "Don't share passwords", "points": 10 },
+            { "answer": "A quiz you can retake unlimited times", "points": 6 }
+          ]
+        },
+        {
+          "question": "Name a security certification",
+          "answers": [
+            { "answer": "CISSP", "points": 30 },
+            { "answer": "CEH", "points": 22 },
+            { "answer": "CompTIA Security+", "points": 20 },
+            { "answer": "OSCP", "points": 12 },
+            { "answer": "CISM", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name something on a security vendor's booth at a conference",
+          "answers": [
+            { "answer": "Free t-shirts / swag", "points": 35 },
+            { "answer": "A badge scanner", "points": 22 },
+            { "answer": "Buzzword-filled banners", "points": 16 },
+            { "answer": "A demo that's definitely not live", "points": 12 },
+            { "answer": "Free socks", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a compliance framework",
+          "answers": [
+            { "answer": "SOC 2", "points": 30 },
+            { "answer": "ISO 27001", "points": 22 },
+            { "answer": "PCI DSS", "points": 18 },
+            { "answer": "HIPAA", "points": 12 },
+            { "answer": "NIST", "points": 10 }
+          ]
+        },
+        {
+          "question": "Name a buzzword in a CISO's LinkedIn post",
+          "answers": [
+            { "answer": "Zero trust", "points": 30 },
+            { "answer": "AI / machine learning", "points": 24 },
+            { "answer": "Shift left", "points": 16 },
+            { "answer": "Cyber resilience", "points": 12 },
+            { "answer": "Digital transformation", "points": 10 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Crypto & Privacy",
+      "questions": [
+        {
+          "question": "Name an encryption algorithm",
+          "answers": [
+            { "answer": "AES", "points": 35 },
+            { "answer": "RSA", "points": 28 },
+            { "answer": "SHA / SHA-256", "points": 15 },
+            { "answer": "DES / 3DES", "points": 10 },
+            { "answer": "Blowfish", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a privacy-focused messaging app",
+          "answers": [
+            { "answer": "Signal", "points": 40 },
+            { "answer": "Telegram", "points": 22 },
+            { "answer": "Wickr", "points": 12 },
+            { "answer": "Session", "points": 8 },
+            { "answer": "Matrix / Element", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a cryptocurrency",
+          "answers": [
+            { "answer": "Bitcoin", "points": 40 },
+            { "answer": "Ethereum", "points": 25 },
+            { "answer": "Monero", "points": 15 },
+            { "answer": "Dogecoin", "points": 8 },
+            { "answer": "Litecoin", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a way to browse anonymously",
+          "answers": [
+            { "answer": "Tor / Tor Browser", "points": 40 },
+            { "answer": "VPN", "points": 28 },
+            { "answer": "Incognito mode (lol)", "points": 15 },
+            { "answer": "Proxy / SOCKS proxy", "points": 8 },
+            { "answer": "Someone else's computer", "points": 4 }
+          ]
+        },
+        {
+          "question": "Name something that tracks you online",
+          "answers": [
+            { "answer": "Cookies", "points": 30 },
+            { "answer": "Google", "points": 25 },
+            { "answer": "Facebook / Meta pixel", "points": 18 },
+            { "answer": "Your ISP", "points": 10 },
+            { "answer": "Browser fingerprinting", "points": 8 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Hardware & Physical",
+      "questions": [
+        {
+          "question": "Name a brand of laptop hackers use",
+          "answers": [
+            { "answer": "ThinkPad / Lenovo", "points": 35 },
+            { "answer": "MacBook / Apple", "points": 28 },
+            { "answer": "Dell", "points": 15 },
+            { "answer": "Framework", "points": 10 },
+            { "answer": "System76", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a physical security bypass tool",
+          "answers": [
+            { "answer": "Lockpicks", "points": 32 },
+            { "answer": "RFID cloner / Flipper Zero", "points": 25 },
+            { "answer": "Bump key", "points": 15 },
+            { "answer": "Shim / credit card", "points": 12 },
+            { "answer": "A clipboard and a hard hat", "points": 10 }
+          ]
+        },
+        {
+          "question": "Name a single-board computer",
+          "answers": [
+            { "answer": "Raspberry Pi", "points": 50 },
+            { "answer": "Arduino", "points": 22 },
+            { "answer": "BeagleBone", "points": 10 },
+            { "answer": "ESP32", "points": 8 },
+            { "answer": "Orange Pi", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name a connector cable type on a hacker's desk",
+          "answers": [
+            { "answer": "USB-C", "points": 30 },
+            { "answer": "USB-A", "points": 22 },
+            { "answer": "Ethernet / RJ45", "points": 18 },
+            { "answer": "HDMI", "points": 12 },
+            { "answer": "Serial / DB9", "points": 10 }
+          ]
+        },
+        {
+          "question": "Name a thing inside a computer that overheats",
+          "answers": [
+            { "answer": "CPU", "points": 40 },
+            { "answer": "GPU", "points": 28 },
+            { "answer": "RAM (when overclocked)", "points": 10 },
+            { "answer": "Power supply", "points": 8 },
+            { "answer": "VRM / voltage regulators", "points": 6 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "The Internet",
+      "questions": [
+        {
+          "question": "Name a website everyone visits but nobody admits to",
+          "answers": [
+            { "answer": "Reddit", "points": 28 },
+            { "answer": "Porn sites", "points": 25 },
+            { "answer": "TikTok", "points": 18 },
+            { "answer": "Stack Overflow (to copy code)", "points": 12 },
+            { "answer": "LinkedIn", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a thing that went viral on the internet",
+          "answers": [
+            { "answer": "Rickroll / Never Gonna Give You Up", "points": 28 },
+            { "answer": "Doge / meme coins", "points": 20 },
+            { "answer": "Nyan Cat", "points": 15 },
+            { "answer": "Log4Shell / Log4j", "points": 12 },
+            { "answer": "Harlem Shake", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a search engine",
+          "answers": [
+            { "answer": "Google", "points": 40 },
+            { "answer": "DuckDuckGo", "points": 22 },
+            { "answer": "Shodan", "points": 15 },
+            { "answer": "Bing", "points": 10 },
+            { "answer": "Brave Search", "points": 5 }
+          ]
+        },
+        {
+          "question": "Name an HTTP status code",
+          "answers": [
+            { "answer": "404", "points": 35 },
+            { "answer": "200", "points": 22 },
+            { "answer": "500", "points": 18 },
+            { "answer": "403", "points": 10 },
+            { "answer": "301", "points": 8 }
+          ]
+        },
+        {
+          "question": "Name a top-level domain",
+          "answers": [
+            { "answer": ".com", "points": 35 },
+            { "answer": ".org", "points": 20 },
+            { "answer": ".io", "points": 18 },
+            { "answer": ".dev", "points": 10 },
+            { "answer": ".net", "points": 8 },
+            { "answer": ".hacker (wishful thinking)", "points": 3 }
+          ]
+        }
+      ]
+    }
+  ]
+}

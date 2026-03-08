@@ -1,0 +1,120 @@
+{
+  "name": "Hacker Family Feud - Sample Game",
+  "teams": ["Team Pwn", "Team Sudo"],
+  "rounds": [
+    {
+      "question": "Name something you'd find in a pentester's toolkit",
+      "survey": "We surveyed 100 hackers",
+      "answers": [
+        { "text": "Burp Suite", "points": 28 },
+        { "text": "Nmap", "points": 24 },
+        { "text": "Metasploit", "points": 18 },
+        { "text": "Wireshark", "points": 12 },
+        { "text": "John the Ripper", "points": 8 },
+        { "text": "Hashcat", "points": 5 }
+      ]
+    },
+    {
+      "question": "Name a reason a developer loses sleep",
+      "survey": "We surveyed 100 programmers",
+      "answers": [
+        { "text": "Production is down", "points": 30 },
+        { "text": "Deadline tomorrow", "points": 22 },
+        { "text": "Bug they can't find", "points": 18 },
+        { "text": "On-call page", "points": 12 },
+        { "text": "Security breach", "points": 10 }
+      ]
+    },
+    {
+      "question": "Name something a hacker has too many of",
+      "survey": "We surveyed 100 hackers",
+      "answers": [
+        { "text": "Passwords", "points": 22 },
+        { "text": "Monitors", "points": 18 },
+        { "text": "Stickers", "points": 16 },
+        { "text": "Hoodies", "points": 14 },
+        { "text": "Side projects", "points": 12 },
+        { "text": "Tabs open", "points": 10 }
+      ]
+    },
+    {
+      "question": "Name a type of cyber attack",
+      "survey": "We surveyed 100 security professionals",
+      "answers": [
+        { "text": "Phishing", "points": 30 },
+        { "text": "Ransomware", "points": 22 },
+        { "text": "DDoS", "points": 16 },
+        { "text": "SQL Injection", "points": 12 },
+        { "text": "XSS", "points": 8 },
+        { "text": "Man-in-the-Middle", "points": 6 }
+      ]
+    },
+    {
+      "question": "Name a famous data breach",
+      "survey": "We surveyed 100 security professionals",
+      "answers": [
+        { "text": "Equifax", "points": 25 },
+        { "text": "Yahoo", "points": 20 },
+        { "text": "Target", "points": 15 },
+        { "text": "SolarWinds", "points": 12 },
+        { "text": "Sony", "points": 10 },
+        { "text": "LinkedIn", "points": 8 }
+      ]
+    }
+  ],
+  "fastMoney": [
+    {
+      "question": "Name a port number every hacker knows",
+      "answers": [
+        { "text": "80", "points": 30 },
+        { "text": "443", "points": 25 },
+        { "text": "22", "points": 20 },
+        { "text": "21", "points": 10 },
+        { "text": "3389", "points": 8 },
+        { "text": "8080", "points": 4 }
+      ]
+    },
+    {
+      "question": "Name a programming language hackers love",
+      "answers": [
+        { "text": "Python", "points": 35 },
+        { "text": "C", "points": 20 },
+        { "text": "Bash", "points": 15 },
+        { "text": "Go", "points": 10 },
+        { "text": "Rust", "points": 8 },
+        { "text": "JavaScript", "points": 7 }
+      ]
+    },
+    {
+      "question": "Name a hacker conference",
+      "answers": [
+        { "text": "DEF CON", "points": 40 },
+        { "text": "Black Hat", "points": 25 },
+        { "text": "RSA", "points": 12 },
+        { "text": "CCC", "points": 8 },
+        { "text": "BSides", "points": 7 },
+        { "text": "ShmooCon", "points": 4 }
+      ]
+    },
+    {
+      "question": "Name a Linux distro used for security testing",
+      "answers": [
+        { "text": "Kali", "points": 45 },
+        { "text": "Parrot", "points": 20 },
+        { "text": "BlackArch", "points": 12 },
+        { "text": "Tails", "points": 10 },
+        { "text": "Qubes", "points": 5 }
+      ]
+    },
+    {
+      "question": "Name something you should never reuse",
+      "answers": [
+        { "text": "Passwords", "points": 40 },
+        { "text": "Needles", "points": 20 },
+        { "text": "Keys", "points": 15 },
+        { "text": "Encryption nonces", "points": 10 },
+        { "text": "Underwear", "points": 8 }
+      ]
+    }
+  ]
+}
