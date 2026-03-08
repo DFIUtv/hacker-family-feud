@@ -17,6 +17,93 @@ const { WebSocketServer } = require('ws');
 
 const PORT = parseInt(process.argv[2] || '3003', 10);
 
+// Content directories: web/surveys/ for game-ready files, content/ for raw content
+const SURVEY_DIR = path.join(__dirname, 'surveys');
+const CONTENT_DIR = path.join(__dirname, '..', 'content');
+
+// Normalize content files from content/ format to game-ready format
+function normalizeContentData(data) {
+  const out = { name: data.name || 'Untitled', teams: data.teams };
+
+  // Normalize rounds: content/ uses "surveys" array, game-ready uses "rounds"
+  if (data.rounds) {
+    out.rounds = data.rounds;
+  } else if (data.surveys) {
+    out.rounds = data.surveys.map(s => ({
+      question: s.question,
+      survey: s.survey ? `${s.survey}` : 'We surveyed 100 hackers',
+      answers: s.answers,
+    }));
+  }
+
+  // Normalize fast money: content/ uses "fastMoneySets" array, game-ready uses "fastMoney"
+  if (data.fastMoney) {
+    out.fastMoney = data.fastMoney;
+  } else if (data.fastMoneySets) {
+    // Each set has multiple questions; flatten them or pick one set
+    // For game loading, we need a flat array of questions
+    out.fastMoney = data.fastMoneySets.flatMap(s => s.questions || []);
+  }
+
+  return out;
+}
+
+// List all available game files from both directories
+function listAllSurveys() {
+  const results = [];
+  // Game-ready files from web/surveys/
+  try {
+    const files = fs.readdirSync(SURVEY_DIR).filter(f => f.endsWith('.json'));
+    for (const f of files) {
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(SURVEY_DIR, f), 'utf8'));
+        results.push({ file: f, dir: 'surveys', name: data.name || f, rounds: (data.rounds || []).length, fastMoney: (data.fastMoney || []).length });
+      } catch {}
+    }
+  } catch {}
+  // Raw content from content/
+  try {
+    const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.json'));
+    // Build a combined game from surveys.json + fast-money.json if both exist
+    let hasSurveys = false, hasFM = false;
+    for (const f of files) {
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(CONTENT_DIR, f), 'utf8'));
+        if (data.surveys) hasSurveys = f;
+        if (data.fastMoneySets) hasFM = f;
+      } catch {}
+    }
+    if (hasSurveys) {
+      const surveyData = JSON.parse(fs.readFileSync(path.join(CONTENT_DIR, hasSurveys), 'utf8'));
+      const fmData = hasFM ? JSON.parse(fs.readFileSync(path.join(CONTENT_DIR, hasFM), 'utf8')) : null;
+      const roundCount = (surveyData.surveys || []).length;
+      const fmCount = fmData ? (fmData.fastMoneySets || []).flatMap(s => s.questions || []).length : 0;
+      results.push({ file: '__content__', dir: 'content', name: `Full Content Library (${roundCount} surveys)`, rounds: roundCount, fastMoney: fmCount });
+    }
+  } catch {}
+  return results;
+}
+
+// Load a game file by name, searching both directories
+function loadSurveyFile(file) {
+  if (file === '__content__') {
+    // Load combined content from content/ directory
+    const surveyPath = path.join(CONTENT_DIR, 'surveys.json');
+    const fmPath = path.join(CONTENT_DIR, 'fast-money.json');
+    const surveyData = JSON.parse(fs.readFileSync(surveyPath, 'utf8'));
+    const fmData = fs.existsSync(fmPath) ? JSON.parse(fs.readFileSync(fmPath, 'utf8')) : null;
+    const combined = { name: 'Full Content Library', surveys: surveyData.surveys };
+    if (fmData) combined.fastMoneySets = fmData.fastMoneySets;
+    return normalizeContentData(combined);
+  }
+  // Try web/surveys/ first
+  const surveyPath = path.join(SURVEY_DIR, path.basename(file));
+  if (fs.existsSync(surveyPath)) {
+    return normalizeContentData(JSON.parse(fs.readFileSync(surveyPath, 'utf8')));
+  }
+  throw new Error('Survey file not found: ' + file);
+}
+
 // --- MIME types ---
 const MIME = {
   '.html': 'text/html',
@@ -39,13 +126,8 @@ const server = http.createServer((req, res) => {
 
   // API: list available surveys
   if (filePath === '/api/surveys') {
-    const surveyDir = path.join(__dirname, 'surveys');
     try {
-      const files = fs.readdirSync(surveyDir).filter(f => f.endsWith('.json'));
-      const surveys = files.map(f => {
-        const data = JSON.parse(fs.readFileSync(path.join(surveyDir, f), 'utf8'));
-        return { file: f, name: data.name || f, rounds: (data.rounds || []).length, fastMoney: (data.fastMoney || []).length };
-      });
+      const surveys = listAllSurveys();
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(surveys));
     } catch {
@@ -124,13 +206,23 @@ let game = createGameState();
 
 const wss = new WebSocketServer({ server });
 const clients = new Set(); // All connected clients
+const players = new Map(); // ws -> { name, team (0|1|-1), id }
 let hostWs = null;
+let playerIdCounter = 0;
 
 function broadcast(msg) {
   const data = JSON.stringify(msg);
   for (const ws of clients) {
     if (ws.readyState === 1) ws.send(data);
   }
+}
+
+function broadcastPlayerList() {
+  const list = [];
+  for (const [, p] of players) {
+    list.push({ id: p.id, name: p.name, team: p.team });
+  }
+  broadcast({ type: 'player-list', players: list });
 }
 
 function sendTo(ws, msg) {
@@ -181,7 +273,7 @@ function loadRound(roundIndex) {
     question: q.question,
     survey: q.survey || 'We surveyed 100 hackers',
     answers: q.answers.map(a => ({
-      text: a.text,
+      text: a.text || a.answer,
       points: a.points,
       revealed: false,
     })),
@@ -208,12 +300,55 @@ function handleMessage(ws, msg) {
       sendTo(ws, { type: 'game-state', state: sanitizeState(game) });
       break;
 
+    case 'register-player': {
+      const pId = ++playerIdCounter;
+      const name = (msg.name || 'Player').slice(0, 30);
+      players.set(ws, { id: pId, name, team: -1 });
+      sendTo(ws, { type: 'player-registered', id: pId, name });
+      sendTo(ws, { type: 'game-state', state: sanitizeState(game) });
+      // Notify host of player list update
+      broadcastPlayerList();
+      break;
+    }
+
+    case 'player-join-team': {
+      const p = players.get(ws);
+      if (!p) return;
+      const team = msg.team;
+      if (team !== 0 && team !== 1) return;
+      p.team = team;
+      sendTo(ws, { type: 'team-joined', team, teamName: game.teams[team].name });
+      broadcastPlayerList();
+      break;
+    }
+
+    case 'player-buzz': {
+      const p = players.get(ws);
+      if (!p || p.team < 0) return;
+      if (game.phase !== 'faceoff') return;
+      // Notify host of player buzz
+      if (hostWs) {
+        sendTo(hostWs, { type: 'player-buzzed', playerId: p.id, playerName: p.name, team: p.team });
+      }
+      broadcast({ type: 'buzzed', name: p.name, team: p.team });
+      break;
+    }
+
+    case 'player-answer': {
+      const p = players.get(ws);
+      if (!p || p.team < 0) return;
+      // Forward player answer to host for judgment
+      if (hostWs) {
+        sendTo(hostWs, { type: 'player-answered', playerId: p.id, playerName: p.name, team: p.team, text: (msg.text || '').slice(0, 200) });
+      }
+      break;
+    }
+
     // --- Game Setup ---
     case 'load-survey': {
       if (ws !== hostWs) return;
-      const surveyPath = path.join(__dirname, 'surveys', path.basename(msg.file));
       try {
-        const data = JSON.parse(fs.readFileSync(surveyPath, 'utf8'));
+        const data = loadSurveyFile(msg.file);
         game = createGameState();
         game.surveyFile = msg.file;
         game.surveyData = data;
@@ -221,6 +356,7 @@ function handleMessage(ws, msg) {
           if (data.teams[0]) game.teams[0].name = data.teams[0];
           if (data.teams[1]) game.teams[1].name = data.teams[1];
         }
+        sendTo(ws, { type: 'survey-loaded', file: msg.file, rounds: (data.rounds || []).length });
         sendState();
       } catch (e) {
         sendTo(ws, { type: 'error', message: 'Failed to load survey: ' + e.message });
@@ -416,7 +552,7 @@ function handleMessage(ws, msg) {
         if (game.surveyData && game.surveyData.fastMoney) {
           game.fastMoney.questions = game.surveyData.fastMoney.map(q => ({
             question: q.question,
-            answers: q.answers,
+            answers: (q.answers || []).map(a => ({ text: a.text || a.answer, points: a.points })),
           }));
         }
         sendState();
@@ -439,11 +575,24 @@ function handleMessage(ws, msg) {
       const fm = game.fastMoney;
       const player = fm.currentPlayer; // 1 or 2
       const arr = player === 1 ? fm.p1Answers : fm.p2Answers;
-      arr[fm.currentQ] = {
+      const idx = msg.index != null ? msg.index : fm.currentQ;
+      let isDuplicate = false;
+      // Duplicate detection: if Player 2 gives the same answer as Player 1
+      if (player === 2 && fm.p1Answers[idx] && msg.text) {
+        const p1Text = (fm.p1Answers[idx].text || '').trim().toLowerCase();
+        const p2Text = (msg.text || '').trim().toLowerCase();
+        if (p1Text && p2Text && p1Text === p2Text) {
+          isDuplicate = true;
+        }
+      }
+      arr[idx] = {
         text: msg.text || '',
         points: msg.points || 0,
-        duplicate: msg.duplicate || false,
+        duplicate: isDuplicate || msg.duplicate || false,
       };
+      if (isDuplicate) {
+        broadcast({ type: 'fm-duplicate', index: idx, text: msg.text });
+      }
       sendState();
       break;
     }
@@ -563,6 +712,10 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     clients.delete(ws);
     if (ws === hostWs) hostWs = null;
+    if (players.has(ws)) {
+      players.delete(ws);
+      broadcastPlayerList();
+    }
   });
 });
 
@@ -570,4 +723,5 @@ server.listen(PORT, () => {
   console.log(`Hacker Family Feud server on http://localhost:${PORT}`);
   console.log(`  Host console: http://localhost:${PORT}/host.html`);
   console.log(`  Audience board: http://localhost:${PORT}/board.html`);
+  console.log(`  Player view:   http://localhost:${PORT}/player.html`);
 });

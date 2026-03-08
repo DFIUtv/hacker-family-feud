@@ -299,9 +299,63 @@ let ws = null;
 let state = null;
 let lastStrikeCount = 0;
 
+// --- Sound Effects (Web Audio API) ---
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playStrikeBuzz() {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+  osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+  gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+}
+
+function playCorrectDing() {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+  osc.frequency.setValueAtTime(1320, audioCtx.currentTime + 0.1);
+  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+}
+
+function playTimerWarning() {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+  gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+}
+
+function playDuplicateBuzz() {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+  osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.6);
+  gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.6);
+}
+
+let reconnectDelay = 1000;
+const MAX_RECONNECT_DELAY = 30000;
+
 function connect() {
   ws = new WebSocket(WS_URL);
   ws.onopen = () => {
+    reconnectDelay = 1000;
     ws.send(JSON.stringify({ type: 'register-board' }));
   };
   ws.onmessage = (e) => {
@@ -309,17 +363,31 @@ function connect() {
     if (msg.type === 'game-state') {
       const oldState = state;
       state = msg.state;
+      // Detect newly revealed answers and play ding
+      if (oldState?.currentQuestion && state.currentQuestion) {
+        for (let i = 0; i < state.currentQuestion.answers.length; i++) {
+          if (state.currentQuestion.answers[i].revealed && !oldState.currentQuestion.answers[i]?.revealed) {
+            playCorrectDing();
+            break;
+          }
+        }
+      }
       render(oldState);
     }
     if (msg.type === 'strike') {
+      playStrikeBuzz();
       showStrike(msg.count);
+    }
+    if (msg.type === 'fm-duplicate') {
+      playDuplicateBuzz();
     }
     if (msg.type === 'timer-tick' && state && state.fastMoney) {
       state.fastMoney.timer = msg.timer;
+      if (msg.timer <= 5 && msg.timer > 0) playTimerWarning();
       updateTimer();
     }
   };
-  ws.onclose = () => setTimeout(connect, 2000);
+  ws.onclose = () => { setTimeout(connect, reconnectDelay); reconnectDelay = Math.min(reconnectDelay * 2, MAX_RECONNECT_DELAY); };
   ws.onerror = () => ws.close();
 }
 

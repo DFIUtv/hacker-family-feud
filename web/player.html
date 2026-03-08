@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Hacker Family Feud - Player</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0a0a2e;
+  color: #e5e5e5;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+/* --- Header --- */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.6rem 1rem; background: #0f0f2e;
+  border-bottom: 2px solid #f59e0b;
+}
+header h1 { color: #f59e0b; font-size: 1rem; font-weight: 800; letter-spacing: 0.05em; }
+.conn-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; flex-shrink: 0; }
+.conn-dot.ok { background: #22c55e; }
+.conn-info { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #888; }
+
+/* --- Main content --- */
+main {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 1.5rem; text-align: center;
+  overflow-y: auto;
+}
+
+/* --- Screens --- */
+.screen { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 400px; }
+.screen.active { display: flex; }
+
+/* --- Join screen --- */
+.join-title { font-size: 1.8rem; font-weight: 900; color: #f59e0b; margin-bottom: 1.5rem; }
+.join-input {
+  width: 100%; padding: 0.75rem 1rem; font-size: 1.1rem;
+  background: #1a1a4e; border: 2px solid #333366; border-radius: 8px;
+  color: #fff; font-family: inherit; text-align: center;
+  margin-bottom: 1rem;
+}
+.join-input:focus { outline: none; border-color: #f59e0b; }
+
+/* --- Team select --- */
+.team-buttons { display: flex; gap: 1rem; width: 100%; margin-bottom: 1.5rem; }
+.team-btn {
+  flex: 1; padding: 1.2rem 0.5rem; border-radius: 12px;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  border: 3px solid #333366; background: #1a1a4e; color: #ccc;
+  transition: all 0.2s; font-family: inherit;
+}
+.team-btn:active { transform: scale(0.95); }
+.team-btn.selected { border-color: #f59e0b; color: #fff; background: #2a1a00; }
+.join-btn {
+  width: 100%; padding: 1rem; border-radius: 12px;
+  font-size: 1.2rem; font-weight: 800; cursor: pointer;
+  border: none; background: #f59e0b; color: #000;
+  font-family: inherit; transition: all 0.15s;
+}
+.join-btn:active { transform: scale(0.97); background: #d97706; }
+.join-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* --- Game screen --- */
+.team-banner {
+  width: 100%; padding: 0.5rem; margin-bottom: 0.5rem;
+  background: #1a1a4e; border-radius: 8px;
+  font-size: 0.9rem; color: #f59e0b; font-weight: 600;
+}
+.phase-label {
+  font-size: 0.85rem; color: #888; text-transform: uppercase;
+  letter-spacing: 0.1em; margin-bottom: 0.75rem;
+}
+.question-display {
+  font-size: 1.3rem; font-weight: 700; color: #fff;
+  margin-bottom: 1.5rem; line-height: 1.3;
+  min-height: 2.5rem;
+}
+.score-display {
+  display: flex; gap: 1.5rem; margin-bottom: 1rem;
+}
+.score-box {
+  text-align: center;
+}
+.score-box .label { font-size: 0.7rem; color: #666; text-transform: uppercase; }
+.score-box .val { font-size: 1.8rem; font-weight: 900; color: #f59e0b; }
+.score-box.mine .val { color: #22c55e; }
+
+/* --- Buzzer --- */
+.buzzer-area { width: 100%; margin-bottom: 1rem; }
+.buzz-btn {
+  width: 100%; height: 120px; border-radius: 20px;
+  font-size: 2rem; font-weight: 900; cursor: pointer;
+  border: 4px solid #ef4444; background: #3a0a0a; color: #ef4444;
+  font-family: inherit; transition: all 0.1s;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.buzz-btn:active { transform: scale(0.95); background: #ef4444; color: #fff; }
+.buzz-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+.buzz-btn.ready { border-color: #22c55e; background: #0a3a0a; color: #22c55e; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); } 50% { box-shadow: 0 0 30px 10px rgba(34,197,94,0.2); } }
+
+/* --- Answer input --- */
+.answer-area { width: 100%; }
+.answer-input {
+  width: 100%; padding: 0.75rem 1rem; font-size: 1.1rem;
+  background: #1a1a4e; border: 2px solid #333366; border-radius: 8px;
+  color: #fff; font-family: inherit; text-align: center;
+  margin-bottom: 0.75rem;
+}
+.answer-input:focus { outline: none; border-color: #f59e0b; }
+.send-btn {
+  width: 100%; padding: 0.75rem; border-radius: 8px;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  border: none; background: #22c55e; color: #000;
+  font-family: inherit;
+}
+.send-btn:active { background: #16a34a; }
+.send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* --- Waiting state --- */
+.waiting-msg {
+  font-size: 1.2rem; color: #555; font-weight: 600;
+  padding: 2rem 0;
+}
+
+/* --- FM Timer --- */
+.fm-timer {
+  font-size: 4rem; font-weight: 900; color: #fff; margin: 1rem 0;
+}
+.fm-timer.warn { color: #f59e0b; }
+.fm-timer.crit { color: #ef4444; }
+
+/* --- Notification --- */
+.notification {
+  position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+  padding: 0.75rem 1.5rem; border-radius: 8px;
+  font-weight: 700; z-index: 100; display: none;
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+.notification.buzz { background: #f59e0b; color: #000; }
+.notification.strike { background: #ef4444; color: #fff; }
+.notification.dup { background: #ef4444; color: #fff; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>FAMILY FEUD</h1>
+  <div class="conn-info">
+    <span id="player-name-display"></span>
+    <div id="conn-dot" class="conn-dot"></div>
+  </div>
+</header>
+
+<main>
+  <!-- JOIN SCREEN -->
+  <div class="screen active" id="screen-join">
+    <div class="join-title">JOIN GAME</div>
+    <input class="join-input" id="name-input" type="text" placeholder="Your Name" maxlength="30" autocomplete="off">
+    <div class="team-buttons" id="team-buttons">
+      <button class="team-btn" id="team-btn-0" onclick="selectTeam(0)">Team 1</button>
+      <button class="team-btn" id="team-btn-1" onclick="selectTeam(1)">Team 2</button>
+    </div>
+    <button class="join-btn" id="join-btn" onclick="joinGame()" disabled>Join Game</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div class="screen" id="screen-game">
+    <div class="team-banner" id="team-banner">--</div>
+    <div class="score-display" id="score-display"></div>
+    <div class="phase-label" id="phase-label">LOBBY</div>
+    <div class="question-display" id="question-display"></div>
+
+    <!-- BUZZER (face-off) -->
+    <div class="buzzer-area" id="buzzer-area" style="display:none;">
+      <button class="buzz-btn" id="buzz-btn" onclick="buzz()">BUZZ!</button>
+    </div>
+
+    <!-- ANSWER INPUT (play phase) -->
+    <div class="answer-area" id="answer-area" style="display:none;">
+      <input class="answer-input" id="answer-input" type="text" placeholder="Your answer..." maxlength="200" autocomplete="off">
+      <button class="send-btn" id="send-btn" onclick="submitAnswer()">Send Answer</button>
+    </div>
+
+    <!-- FM TIMER -->
+    <div class="fm-timer" id="fm-timer" style="display:none;"></div>
+
+    <!-- WAITING -->
+    <div class="waiting-msg" id="waiting-msg" style="display:none;">Waiting...</div>
+  </div>
+</main>
+
+<div class="notification" id="notification"></div>
+
+<script>
+const WS_URL = new URLSearchParams(location.search).get('ws') || `ws://${location.hostname}:${location.port || 3003}`;
+let ws = null;
+let state = null;
+let myTeam = -1;
+let myName = '';
+let myId = null;
+let selectedTeam = -1;
+let reconnectDelay = 1000;
+const MAX_RECONNECT_DELAY = 30000;
+
+// --- WebSocket ---
+function connect() {
+  ws = new WebSocket(WS_URL);
+  ws.onopen = () => {
+    reconnectDelay = 1000;
+    document.getElementById('conn-dot').classList.add('ok');
+    if (myName && myId) {
+      // Re-register after reconnect
+      ws.send(JSON.stringify({ type: 'register-player', name: myName }));
+      if (myTeam >= 0) {
+        setTimeout(() => ws.send(JSON.stringify({ type: 'player-join-team', team: myTeam })), 100);
+      }
+    }
+  };
+  ws.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    handleMessage(msg);
+  };
+  ws.onclose = () => {
+    document.getElementById('conn-dot').classList.remove('ok');
+    setTimeout(connect, reconnectDelay);
+    reconnectDelay = Math.min(reconnectDelay * 2, MAX_RECONNECT_DELAY);
+  };
+  ws.onerror = () => ws.close();
+}
+
+function send(msg) {
+  if (ws && ws.readyState === 1) ws.send(JSON.stringify(msg));
+}
+
+function handleMessage(msg) {
+  switch (msg.type) {
+    case 'player-registered':
+      myId = msg.id;
+      break;
+    case 'team-joined':
+      myTeam = msg.team;
+      break;
+    case 'game-state':
+      state = msg.state;
+      // Update team names on join screen
+      updateTeamButtons();
+      renderGame();
+      break;
+    case 'timer-tick':
+      if (state && state.fastMoney) {
+        state.fastMoney.timer = msg.timer;
+        renderFMTimer();
+      }
+      break;
+    case 'strike':
+      showNotify('STRIKE! X', 'strike', 1500);
+      break;
+    case 'buzzed':
+      if (msg.name) showNotify(`BUZZED: ${msg.name}`, 'buzz', 2000);
+      break;
+    case 'fm-duplicate':
+      showNotify('DUPLICATE ANSWER!', 'dup', 2000);
+      break;
+  }
+}
+
+// --- Join Screen ---
+function selectTeam(t) {
+  selectedTeam = t;
+  document.getElementById('team-btn-0').classList.toggle('selected', t === 0);
+  document.getElementById('team-btn-1').classList.toggle('selected', t === 1);
+  checkJoinReady();
+}
+
+function checkJoinReady() {
+  const name = document.getElementById('name-input').value.trim();
+  document.getElementById('join-btn').disabled = !name || selectedTeam < 0;
+}
+
+document.getElementById('name-input').addEventListener('input', checkJoinReady);
+
+function updateTeamButtons() {
+  if (!state) return;
+  document.getElementById('team-btn-0').textContent = state.teams[0].name;
+  document.getElementById('team-btn-1').textContent = state.teams[1].name;
+}
+
+function joinGame() {
+  myName = document.getElementById('name-input').value.trim();
+  if (!myName || selectedTeam < 0) return;
+  myTeam = selectedTeam;
+  document.getElementById('player-name-display').textContent = myName;
+  send({ type: 'register-player', name: myName });
+  send({ type: 'player-join-team', team: myTeam });
+  showScreen('screen-game');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// --- Game Screen ---
+function renderGame() {
+  if (!state || myTeam < 0) return;
+  const myTeamData = state.teams[myTeam];
+  const otherTeam = state.teams[myTeam === 0 ? 1 : 0];
+  document.getElementById('team-banner').textContent = myTeamData.name;
+
+  // Score
+  document.getElementById('score-display').innerHTML = `
+    <div class="score-box mine"><div class="label">${esc(myTeamData.name)}</div><div class="val">${myTeamData.score}</div></div>
+    <div class="score-box"><div class="label">${esc(otherTeam.name)}</div><div class="val">${otherTeam.score}</div></div>
+  `;
+
+  // Phase
+  const phaseLabels = {
+    lobby: 'Waiting to Start',
+    faceoff: 'Face-Off!',
+    play_pass: 'Play or Pass?',
+    play: `${esc(state.teams[state.controllingTeam]?.name || '')} Playing`,
+    steal: 'Steal Attempt!',
+    score: 'Round Complete',
+    fast_money_setup: 'Fast Money Setup',
+    fast_money_p1: 'Fast Money - Player 1',
+    fast_money_p2: 'Fast Money - Player 2',
+    fast_money_reveal: 'Fast Money Reveal',
+    game_over: 'Game Over',
+  };
+  document.getElementById('phase-label').textContent = phaseLabels[state.phase] || state.phase;
+
+  // Question
+  const q = state.currentQuestion;
+  document.getElementById('question-display').textContent = q ? q.question : '';
+
+  // Show/hide areas based on phase
+  const buzzerArea = document.getElementById('buzzer-area');
+  const answerArea = document.getElementById('answer-area');
+  const fmTimer = document.getElementById('fm-timer');
+  const waitingMsg = document.getElementById('waiting-msg');
+
+  buzzerArea.style.display = 'none';
+  answerArea.style.display = 'none';
+  fmTimer.style.display = 'none';
+  waitingMsg.style.display = 'none';
+
+  switch (state.phase) {
+    case 'faceoff':
+      buzzerArea.style.display = 'block';
+      const buzzBtn = document.getElementById('buzz-btn');
+      buzzBtn.classList.toggle('ready', state.faceoffBuzzer < 0);
+      buzzBtn.disabled = state.faceoffBuzzer >= 0;
+      buzzBtn.textContent = state.faceoffBuzzer >= 0 ? `${esc(state.teams[state.faceoffBuzzer].name)} Buzzed` : 'BUZZ!';
+      break;
+
+    case 'play':
+      if (state.controllingTeam === myTeam) {
+        answerArea.style.display = 'block';
+      } else {
+        waitingMsg.style.display = 'block';
+        waitingMsg.textContent = `${esc(state.teams[state.controllingTeam]?.name || 'Other team')} is playing...`;
+      }
+      break;
+
+    case 'steal':
+      if (state.controllingTeam !== myTeam) {
+        // My team gets to steal
+        answerArea.style.display = 'block';
+      } else {
+        waitingMsg.style.display = 'block';
+        waitingMsg.textContent = `${esc(state.teams[state.controllingTeam === 0 ? 1 : 0]?.name || 'Other team')} is trying to steal...`;
+      }
+      break;
+
+    case 'fast_money_p1':
+    case 'fast_money_p2':
+      fmTimer.style.display = 'block';
+      renderFMTimer();
+      if (q) {
+        document.getElementById('question-display').textContent = state.fastMoney?.questions[state.fastMoney.currentQ]?.question || '';
+      }
+      break;
+
+    case 'fast_money_reveal':
+      const fm = state.fastMoney;
+      if (fm) {
+        const allRevealed = fm.revealIndex >= fm.questions.length * 2;
+        document.getElementById('question-display').textContent =
+          allRevealed ? `Total: ${fm.totalPoints} points!${fm.totalPoints >= 200 ? ' YOU WIN!' : ''}` : `Revealing scores...`;
+      }
+      break;
+
+    case 'game_over': {
+      const w = state.teams[0].score > state.teams[1].score ? 0 : state.teams[1].score > state.teams[0].score ? 1 : -1;
+      document.getElementById('question-display').textContent =
+        w >= 0 ? `${state.teams[w].name} wins!` : 'Tie game!';
+      break;
+    }
+
+    default:
+      waitingMsg.style.display = 'block';
+      waitingMsg.textContent = 'Waiting...';
+      break;
+  }
+}
+
+function renderFMTimer() {
+  const el = document.getElementById('fm-timer');
+  if (!state?.fastMoney) return;
+  const t = state.fastMoney.timer;
+  el.textContent = t;
+  el.className = 'fm-timer' + (t <= 5 ? ' crit' : t <= 10 ? ' warn' : '');
+}
+
+// --- Actions ---
+function buzz() {
+  send({ type: 'player-buzz' });
+}
+
+function submitAnswer() {
+  const input = document.getElementById('answer-input');
+  const text = input.value.trim();
+  if (!text) return;
+  send({ type: 'player-answer', text });
+  input.value = '';
+  showNotify('Answer sent!', 'buzz', 1000);
+}
+
+// Enter key submits answer
+document.getElementById('answer-input')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') submitAnswer();
+});
+
+// Enter key on name input
+document.getElementById('name-input')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') joinGame();
+});
+
+// --- Notifications ---
+function showNotify(text, cls, duration) {
+  const el = document.getElementById('notification');
+  el.textContent = text;
+  el.className = 'notification ' + cls;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, duration);
+}
+
+function esc(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// --- Init ---
+connect();
+</script>
+</body>
+</html>

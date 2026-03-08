@@ -304,9 +304,10 @@ kbd {
       <div id="buzzer-status" style="font-size:0.75rem;color:#666;margin-top:0.4rem;">Disconnected</div>
     </div>
 
-    <h3>Board View</h3>
-    <div style="margin-bottom:0.75rem;">
+    <h3>Views</h3>
+    <div style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:0.75rem;">
       <button class="btn" onclick="window.open('board.html','_blank')" style="width:100%;font-size:0.8rem;">Open Board View</button>
+      <button class="btn" onclick="window.open('player.html','_blank')" style="width:100%;font-size:0.8rem;">Open Player View</button>
     </div>
 
     <h3>Quick Actions</h3>
@@ -330,9 +331,13 @@ let ws = null;
 let state = null;
 let buzzerWs = null;
 
+let reconnectDelay = 1000;
+const MAX_RECONNECT_DELAY = 30000;
+
 function connect() {
   ws = new WebSocket(WS_URL);
   ws.onopen = () => {
+    reconnectDelay = 1000; // Reset on successful connection
     setConn(true, 'Connected');
     ws.send(JSON.stringify({ type: 'register-host' }));
   };
@@ -346,11 +351,19 @@ function connect() {
       state.fastMoney.timer = msg.timer;
       renderFastMoneyTimer();
     }
+    if (msg.type === 'survey-loaded' && pendingStart) {
+      send({ type: 'set-teams', team1: pendingStart.team1, team2: pendingStart.team2 });
+      send({ type: 'start-round', round: 0 });
+      pendingStart = null;
+    }
+    if (msg.type === 'fm-duplicate') {
+      showDuplicateWarning(msg.index, msg.text);
+    }
     if (msg.type === 'strike') {
       renderStrikes();
     }
   };
-  ws.onclose = () => { setConn(false, 'Disconnected'); setTimeout(connect, 2000); };
+  ws.onclose = () => { setConn(false, `Reconnecting in ${reconnectDelay / 1000}s...`); setTimeout(connect, reconnectDelay); reconnectDelay = Math.min(reconnectDelay * 2, MAX_RECONNECT_DELAY); };
   ws.onerror = () => ws.close();
 }
 
@@ -395,6 +408,31 @@ function showBuzzNotification(name) {
     el.textContent = `BUZZED: ${name}`;
     el.style.display = 'block';
     setTimeout(() => { el.style.display = 'none'; }, 3000);
+  }
+}
+
+function matchFaceoffAnswer(team, text) {
+  if (!state || !state.currentQuestion || !text.trim()) return;
+  // Try to fuzzy-match typed text to an answer on the board
+  const lower = text.trim().toLowerCase();
+  let bestIdx = -1;
+  for (let i = 0; i < state.currentQuestion.answers.length; i++) {
+    const aText = state.currentQuestion.answers[i].text.toLowerCase();
+    if (aText.includes(lower) || lower.includes(aText)) {
+      bestIdx = i;
+      break;
+    }
+  }
+  send({ type: 'faceoff-answer', team, answerIndex: bestIdx, text: text.trim() });
+}
+
+function showDuplicateWarning(index, text) {
+  const el = document.getElementById('buzz-notify');
+  if (el) {
+    el.textContent = `DUPLICATE! Q${index + 1}: "${text}" — same as Player 1!`;
+    el.style.display = 'block';
+    el.style.color = '#ef4444';
+    setTimeout(() => { el.style.display = 'none'; el.style.color = ''; }, 4000);
   }
 }
 
@@ -548,16 +586,15 @@ async function loadSurveyList() {
   }
 }
 
+let pendingStart = null;
+
 function startGame() {
   const select = document.getElementById('survey-select');
   if (!select) return;
   const t1 = document.getElementById('team1-name');
   const t2 = document.getElementById('team2-name');
+  pendingStart = { team1: t1?.value || 'Team 1', team2: t2?.value || 'Team 2' };
   send({ type: 'load-survey', file: select.value });
-  setTimeout(() => {
-    send({ type: 'set-teams', team1: t1?.value || 'Team 1', team2: t2?.value || 'Team 2' });
-    send({ type: 'start-round', round: 0 });
-  }, 200);
 }
 
 function renderFaceoff(area) {
@@ -578,9 +615,12 @@ function renderFaceoff(area) {
             onclick="send({type:'faceoff-buzz',team:${i}})">
             ${state.faceoffBuzzer === i ? 'BUZZED FIRST' : 'Buzzed'}
           </button>
-          <select onchange="send({type:'faceoff-answer',team:${i},answerIndex:parseInt(this.value),text:this.options[this.selectedIndex].text})">
-            <option value="-1">-- Answer --</option>
-            ${q ? q.answers.map((a, ai) => `<option value="${ai}" ${state.faceoffAnswers[i]?.answerIndex === ai ? 'selected' : ''}>${esc(a.text)} (${a.points})</option>`).join('') : ''}
+          <input type="text" placeholder="Type answer..." value="${state.faceoffAnswers[i]?.text ? esc(state.faceoffAnswers[i].text) : ''}"
+            onchange="matchFaceoffAnswer(${i}, this.value)" style="margin-top:0.5rem;width:100%;">
+          <select onchange="send({type:'faceoff-answer',team:${i},answerIndex:parseInt(this.value),text:this.options[this.selectedIndex].text})"
+            style="margin-top:0.25rem;width:100%;font-size:0.75rem;color:#666;">
+            <option value="-1">-- Match to board --</option>
+            ${q ? q.answers.map((a, ai) => `<option value="${ai}" ${state.faceoffAnswers[i]?.answerIndex === ai ? 'selected' : ''}>Answer #${ai + 1}</option>`).join('') : ''}
           </select>
         </div>
       `).join('')}
